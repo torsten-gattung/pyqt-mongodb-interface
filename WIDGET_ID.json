@@ -1,0 +1,51 @@
+{
+    "QPushButton": [
+        "editDatabaseButton",
+        "editCollectionButton",
+        "createButton",
+        "filterButton",
+        "modifyButton",
+        "deleteButton",
+        "functionOneButton",
+        "functionTwoButton",
+        "functionThreeButton",
+        "functionFourButton",
+        "functionFiveButton",
+        "functionSixButton",
+        "functionSevenButton",
+        "functionEightButton",
+        "functionNineButton",
+        "functionTenButton",
+        "functionElevenButton",
+        "functionTwelveButton",
+
+        "connectButton"
+    ],
+
+    "QLabel": [
+        "statusBarCurrentStatusLabel",
+        "statusBarConnectionLabel",
+
+        "currentlyConnectedLabel",
+        "activeDatabaseLabel",
+        "activeCollectionLabel"
+
+    ],
+
+    "QTableWidget": [
+        "mainTableWidget"
+    ],
+
+    "QTextEdit": [
+        "manualQueryTextEdit",
+
+        "hostnameFieldTextEdit",
+        "portFieldTextEdit"
+    ],
+
+    "QComboBox": [
+        "availableDatabaseComboBox",
+        "availableCollectionComboBox"
+    ]
+
+}

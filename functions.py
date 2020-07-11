@@ -1,8 +1,5 @@
 import json
 
-def load_global_variables():
-    with open("GLOBAL_VARIABLES.json") as global_vars_as_json:
-
-        global_vars_as_dict = json.load(global_vars_as_json)
-
-        return global_vars_as_dict
+def load_json_file_as_dict(file_path: str):
+    with open(file_path) as _file:
+        return json.load(_file)
