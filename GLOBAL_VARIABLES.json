@@ -1,0 +1,6 @@
+{
+    "SERVER": {
+        "HOSTNAME": "//localhost",
+        "PORT": "27017"
+    }
+}
