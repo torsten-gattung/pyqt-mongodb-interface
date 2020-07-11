@@ -118,7 +118,7 @@ QPushButton:pressed {
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="tabBarAutoHide">
      <bool>false</bool>
@@ -149,7 +149,7 @@ QPushButton:pressed {
        <string>Manual Query</string>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="manualQueryTextEdit">
+     <widget class="QTextEdit" name="manualQueryTextEdit">
       <property name="geometry">
        <rect>
         <x>10</x>
