@@ -6,15 +6,16 @@ from EventListenerManager import EventListenerManager
 
 
 class Gui(QMainWindow):
+
+    # Stores all loaded widgets for easy access throughout program
+    widget_objects = {}
+
     def __init__(self, widget_ids: dict, gui_file_path: str):
         super(Gui, self).__init__()
         uic.loadUi(gui_file_path, self)
 
         # a dictionary with all widget ids as strings: { QWidgetType: [id1, id2, ..] }
         self.widget_ids: dict = widget_ids
-
-        # Stores all loaded widgets for easy access throughout program
-        self.widget_objects = {}
 
         self.__load_everything()
 
@@ -58,9 +59,10 @@ class Gui(QMainWindow):
 
 def start_program(widget_ids: dict, gui_file_path: str):
     app = QApplication(sys.argv)
-    window = Gui(widget_ids, gui_file_path)
 
-    EventListenerManager(window.widget_objects)
+    main_gui = Gui(widget_ids, gui_file_path)
 
-    window.show()
+    EventListenerManager(main_gui.widget_objects)
+
+    main_gui.show()
     app.exec_()
