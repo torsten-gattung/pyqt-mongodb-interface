@@ -17,7 +17,6 @@ class Database:
 
         self.current_active_database_collection_names: [str] = None
 
-
     def __get_available_db_names(self):
         return self._client.list_database_names()
 

@@ -1,10 +1,12 @@
 from Database import Database
+from FrontendLoader import MainWindow
+import re
 
 
 class EventListenerManager:
-    def __init__(self, widget_objects: dict, db: Database):
+    def __init__(self, gui: MainWindow, db: Database):
         
-        self.widget_objects: dict = widget_objects
+        self.gui = gui
         self.db = db
         self.__add_event_listeners()
 
@@ -12,10 +14,11 @@ class EventListenerManager:
         # Bind all database methods into frontend elements
         self.__add_manual_query_listener()
         self.__add_crud_buttons_listeners()
+        self.__add_function_buttons_listeners()
 
     def __add_manual_query_listener(self):
-        query_text_field = self.widget_objects['manualQueryTextEdit']
-        submit_button = self.widget_objects['submitQueryButton']
+        query_text_field = self.gui.widget_objects['manualQueryTextEdit']
+        submit_button = self.gui.widget_objects['submitQueryButton']
 
         query_text = ""
 
@@ -27,10 +30,10 @@ class EventListenerManager:
         submit_button.clicked.connect(execute_manual_query)
 
     def __add_crud_buttons_listeners(self):
-        create_button = self.widget_objects['createButton']
-        filter_button = self.widget_objects['filterButton']
-        modify_button = self.widget_objects['modifyButton']
-        delete_button = self.widget_objects['deleteButton']
+        create_button = self.gui.widget_objects['createButton']
+        filter_button = self.gui.widget_objects['filterButton']
+        modify_button = self.gui.widget_objects['modifyButton']
+        delete_button = self.gui.widget_objects['deleteButton']
 
         #####
 
@@ -57,3 +60,17 @@ class EventListenerManager:
         filter_button.clicked.connect(filter_query)
         modify_button.clicked.connect(modify_query)
         delete_button.clicked.connect(delete_query)
+
+    def __add_function_buttons_listeners(self):
+
+
+        def add_button_listener(button, button_name: str):
+            button.clicked.connect(lambda: print("Clicked " + button_name))
+
+
+        print(self.gui.widget_objects.keys())
+
+        for button_id, button  in self.gui.widget_objects.items():
+            # this RegEx catches all "functionNumberButton"
+            if re.match("^function.*Button$", button_id):
+                add_button_listener(button, button_id)

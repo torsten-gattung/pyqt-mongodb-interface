@@ -1398,9 +1398,34 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>submitQueryButton</tabstop>
+  <tabstop>editDatabaseButton</tabstop>
+  <tabstop>editCollectionButton</tabstop>
+  <tabstop>createButton</tabstop>
+  <tabstop>filterButton</tabstop>
+  <tabstop>modifyButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>functionOneButton</tabstop>
+  <tabstop>functionSevenButton</tabstop>
+  <tabstop>functionTwoButton</tabstop>
+  <tabstop>functionEightButton</tabstop>
+  <tabstop>functionThreeButton</tabstop>
+  <tabstop>functionNineButton</tabstop>
+  <tabstop>functionFourButton</tabstop>
+  <tabstop>functionTenButton</tabstop>
+  <tabstop>functionFiveButton</tabstop>
+  <tabstop>functionElevenButton</tabstop>
+  <tabstop>functionSixButton</tabstop>
+  <tabstop>functionTwelveButton</tabstop>
+  <tabstop>hostnameFieldTextEdit</tabstop>
+  <tabstop>portFieldTextEdit</tabstop>
+  <tabstop>connectButton</tabstop>
+  <tabstop>availableDatabaseComboBox</tabstop>
+  <tabstop>availableCollectionComboBox</tabstop>
+  <tabstop>helpTextBrowser</tabstop>
   <tabstop>manualQueryTextEdit</tabstop>
   <tabstop>mainTableWidget</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -17,10 +17,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import functions as fn
-from FrontendLoader import start_program
+from FrontendLoader import *
+from EventListenerManager import EventListenerManager
+from Database import Database
 
 
 global_vars: dict = fn.load_json_file_as_dict("GLOBAL_VARIABLES.json")
 widget_ids: dict = fn.load_json_file_as_dict("WIDGET_ID.json")
+
+
+
+def start_program(widget_ids: dict, gui_file_path: str):
+    app = QApplication(sys.argv)
+
+    # Gui
+    main_window = MainWindow(widget_ids, gui_file_path)
+
+    # Database
+    db = Database()
+
+    # Event Listener Manager
+    EventListenerManager(main_window, db)
+
+    main_window.show()
+    app.exec_()
+
 
 start_program(widget_ids, global_vars['GUI_FILE_PATH'])

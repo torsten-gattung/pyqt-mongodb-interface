@@ -2,9 +2,6 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 import sys
 
-from EventListenerManager import EventListenerManager
-from Database import Database
-
 class Gui(QMainWindow):
 
     # Stores all loaded widgets for easy access throughout program
@@ -17,54 +14,26 @@ class Gui(QMainWindow):
         # a dictionary with all widget ids as strings: { QWidgetType: [id1, id2, ..] }
         self.widget_ids: dict = widget_ids
 
-        self.__load_everything()
+        self.__load_all_qt_objects()
 
-    def __load_buttons(self):
-        for widget in self.widget_ids['QPushButton']:
-            self.widget_objects[widget] = self.findChild(QPushButton, widget)
+    def __load_all_qt_objects(self):
+        print("\nLoading all GUI elements...")
+        for object_type, id_list in self.widget_ids.items():
+            for object_id in id_list:
+                exec("self.widget_objects[object_id] = self.findChild(" + object_type + ", object_id)")
 
-        print("Loaded QPushButton Widgets")
-
-    def __load_labels(self):
-        for widget in self.widget_ids['QLabel']:
-            self.widget_objects[widget] = self.findChild(QLabel, widget)
-
-        print("Loaded QLabel Widgets")
-
-    def __load_table(self):
-        for widget in self.widget_ids['QTableWidget']:
-            self.widget_objects[widget] = self.findChild(QTableWidget, widget)
-
-        print("Loaded QTableWidget Widgets")
-
-    def __load_text_edits(self):
-        for widget in self.widget_ids['QTextEdit']:
-            self.widget_objects[widget] = self.findChild(QTextEdit, widget)
-
-        print("Loaded QTextEdit Widgets")
-
-    def __load_combo_boxes(self):
-        for widget in self.widget_ids['QComboBox']:
-            self.widget_objects[widget] = self.findChild(QComboBox, widget)
-
-        print("Loaded QComboBox Widgets")
-
-    def __load_everything(self):
-        self.__load_buttons()
-        self.__load_labels()
-        self.__load_table()
-        self.__load_text_edits()
-        self.__load_combo_boxes()
+        print("Successfully loaded all GUI elements")
 
 
-def start_program(widget_ids: dict, gui_file_path: str):
-    app = QApplication(sys.argv)
 
-    main_gui = Gui(widget_ids, gui_file_path)
+class MainWindow(Gui):
 
-    db = Database()
+    # Stores any function button with which has been assigned a custom operation
+    active_function_buttons: [str]
 
-    EventListenerManager(main_gui.widget_objects, db)
+    def __init__(self, widget_ids, gui_file_path):
+        super(MainWindow, self).__init__(widget_ids, gui_file_path)
 
-    main_gui.show()
-    app.exec_()
+
+    def add_function_button_listener(self, button: QPushButton, button_name: str):
+        pass
