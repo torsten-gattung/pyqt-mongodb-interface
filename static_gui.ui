@@ -154,7 +154,7 @@ QPushButton:pressed {
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>971</width>
+        <width>691</width>
         <height>51</height>
        </rect>
       </property>
@@ -744,6 +744,31 @@ QPushButton#deleteButton:pressed {
       </property>
       <property name="text">
        <string>Loaded USERS collection from MAIN_DB database</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="submitQueryButton">
+      <property name="geometry">
+       <rect>
+        <x>730</x>
+        <y>50</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Submit Query</string>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>

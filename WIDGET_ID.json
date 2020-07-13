@@ -1,11 +1,15 @@
 {
     "QPushButton": [
+        "submitQueryButton",
+
         "editDatabaseButton",
         "editCollectionButton",
+        
         "createButton",
         "filterButton",
         "modifyButton",
         "deleteButton",
+
         "functionOneButton",
         "functionTwoButton",
         "functionThreeButton",
