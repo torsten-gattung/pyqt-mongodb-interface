@@ -526,7 +526,7 @@ QPushButton#deleteButton:pressed {
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QPushButton" name="FunctionTenButton">
+      <widget class="QPushButton" name="functionTenButton">
        <property name="geometry">
         <rect>
          <x>140</x>
