@@ -1,14 +1,27 @@
+from Database import Database
+
 
 class EventListenerManager:
-    def __init__(self, widget_objects: dict):
+    def __init__(self, widget_objects: dict, db: Database):
         
         self.widget_objects: dict = widget_objects
-        self.add_event_listeners()
+        self.db = db
+        self.__add_event_listeners()
 
-    def add_event_listeners(self):
+    def __add_event_listeners(self):
+        # Bind all database methods into frontend elements
+        self.__add_manual_query_listener()
 
-        # Import all functions from Database.py and bind them to the widgets
-        # This is where all the event listeners will go. Below is an example.
+    def __add_manual_query_listener(self):
+        query_text_field = self.widget_objects['manualQueryTextEdit']
+        submit_button = self.widget_objects['submitQueryButton']
 
-        # Clicking the Create Button on the Main Tab will log "hello there" into the console
-        self.widget_objects['createButton'].clicked.connect(lambda x: print("hello there"))
+        query_text = ""
+
+        def execute_manual_query(query_text=query_text):
+            query_text = query_text_field.toPlainText()
+            self.db.execute_manual_query(query_text)
+
+
+        submit_button.clicked.connect(execute_manual_query)
+

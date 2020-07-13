@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 import sys
 
 from EventListenerManager import EventListenerManager
-
+from Database import Database
 
 class Gui(QMainWindow):
 
@@ -62,7 +62,9 @@ def start_program(widget_ids: dict, gui_file_path: str):
 
     main_gui = Gui(widget_ids, gui_file_path)
 
-    EventListenerManager(main_gui.widget_objects)
+    db = Database()
+
+    EventListenerManager(main_gui.widget_objects, db)
 
     main_gui.show()
     app.exec_()

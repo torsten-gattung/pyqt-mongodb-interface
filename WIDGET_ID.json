@@ -4,7 +4,7 @@
 
         "editDatabaseButton",
         "editCollectionButton",
-        
+
         "createButton",
         "filterButton",
         "modifyButton",
@@ -33,7 +33,6 @@
         "currentlyConnectedLabel",
         "activeDatabaseLabel",
         "activeCollectionLabel"
-
     ],
 
     "QTableWidget": [
@@ -42,7 +41,7 @@
 
     "QTextEdit": [
         "manualQueryTextEdit",
-
+        
         "hostnameFieldTextEdit",
         "portFieldTextEdit"
     ],
@@ -51,5 +50,4 @@
         "availableDatabaseComboBox",
         "availableCollectionComboBox"
     ]
-
 }

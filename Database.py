@@ -4,6 +4,7 @@ import sys
 
 global_vars: dict = fn.load_json_file_as_dict("GLOBAL_VARIABLES.json")
 
+
 class Database:
 
     def __init__(self):
@@ -33,6 +34,12 @@ class Database:
         
         if collection_name in self.current_active_database_collection_names:
             print("Yup")
+
+    def execute_manual_query(self, manual_query: str):
+        try:
+            exec("print(" + manual_query + ")")
+        except Exception as e:
+            print(e)
             
 
 def run_cli(db: Database):
