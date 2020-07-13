@@ -40,6 +40,20 @@ class Database:
             exec("print(" + manual_query + ")")
         except Exception as e:
             print(e)
+
+    # region CRUD queries
+    def create_query(self, query_data):
+        print("Attmepting CREATE query..")
+
+    def filter_query(self, query_data):
+        print("Attmepting FILTER query..")
+
+    def modify_query(self, query_data):
+        print("Attmepting MODIFY query..")
+
+    def delete_query(self, query_data):
+        print("Attmepting DELETE query..")
+    # endregion
             
 
 def run_cli(db: Database):
