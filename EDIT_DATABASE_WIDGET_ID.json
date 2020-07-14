@@ -1,0 +1,22 @@
+{
+    "QPushButton": [
+        "selectButton",
+        "createDatabaseButton",
+        "deleteDatabaseButton"
+
+    ],
+
+    "QLabel": [
+        "currentDatabaseLabel",
+        "databaseCountLabel",
+        "collectionCountLabel",
+        "localDocumentCountLabel"
+
+    ],
+
+    "QListWidget": [
+        "databaseList",
+        "templateList"
+
+    ]
+}
