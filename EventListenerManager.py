@@ -1,13 +1,23 @@
 from Database import Database
-from FrontendLoader import MainWindow
+from FrontendLoader import Gui, MainWindow
+from CustomException import UnimplementedMethodException
 import re
 
 
 class EventListenerManager:
-    def __init__(self, gui: MainWindow, db: Database):
+    def __init__(self, gui: Gui, db: Database):
         
         self.gui = gui
         self.db = db
+
+    def __add_event_listeners(self):
+        raise UnimplementedMethodException("Method must be implemented in inheriting classes")
+
+
+class MainWindowEventListenerManager(EventListenerManager):
+    def __init__(self, gui: MainWindow, db: Database):
+        super(MainWindowEventListenerManager, self).__init__(gui, db)
+
         self.__add_event_listeners()
 
     def __add_event_listeners(self):
@@ -68,9 +78,8 @@ class EventListenerManager:
             button.clicked.connect(lambda: print("Clicked " + button_name))
 
 
-        print(self.gui.widget_objects.keys())
-
         for button_id, button  in self.gui.widget_objects.items():
-            # this RegEx catches all "functionNumberButton"
+            # this RegEx catches all objects with id ~= "functionNumberButton"
             if re.match("^function.*Button$", button_id):
                 add_button_listener(button, button_id)
+
