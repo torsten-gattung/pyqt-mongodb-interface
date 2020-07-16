@@ -3,7 +3,6 @@ from FrontendLoader import Gui, MainWindow
 from CustomException import UnimplementedMethodException
 import re
 
-
 class EventListenerManager:
     def __init__(self, gui: Gui, db: Database):
         
@@ -25,6 +24,7 @@ class MainWindowEventListenerManager(EventListenerManager):
         self.__add_manual_query_listener()
         self.__add_crud_buttons_listeners()
         self.__add_function_buttons_listeners()
+        self.__add_edit_db_and_collection_buttons_listeners()
 
     def __add_manual_query_listener(self):
         query_text_field = self.gui.widget_objects['manualQueryTextEdit']
@@ -38,6 +38,9 @@ class MainWindowEventListenerManager(EventListenerManager):
 
 
         submit_button.clicked.connect(execute_manual_query)
+    
+    def __add_button_listener(self, button, button_name: str):
+        button.clicked.connect(lambda: print("Clicked " + button_name))
 
     def __add_crud_buttons_listeners(self):
         create_button = self.gui.widget_objects['createButton']
@@ -73,13 +76,15 @@ class MainWindowEventListenerManager(EventListenerManager):
 
     def __add_function_buttons_listeners(self):
 
-
-        def add_button_listener(button, button_name: str):
-            button.clicked.connect(lambda: print("Clicked " + button_name))
-
-
         for button_id, button  in self.gui.widget_objects.items():
             # this RegEx catches all objects with id ~= "functionNumberButton"
             if re.match("^function.*Button$", button_id):
-                add_button_listener(button, button_id)
+                self.__add_button_listener(button, button_id)
 
+    def __add_edit_db_and_collection_buttons_listeners(self):
+
+        edit_database_button = self.gui.widget_objects['editDatabaseButton']
+        edit_collection_button = self.gui.widget_objects['editCollectionButton']
+
+        self.__add_button_listener(edit_database_button, "Edit Database Button")
+        self.__add_button_listener(edit_collection_button, "Edit Collection Button")

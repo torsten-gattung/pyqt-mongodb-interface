@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import functions as fn
 import sys
 
+
 global_vars: dict = fn.load_json_file_as_dict("GLOBAL_VARIABLES.json")
 
 

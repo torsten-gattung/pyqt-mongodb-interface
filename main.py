@@ -1,7 +1,8 @@
-import functions as fn
 from FrontendLoader import *
 from EventListenerManager import EventListenerManager, MainWindowEventListenerManager
 from Database import Database
+import functions as fn
+
 
 
 global_vars: dict = fn.load_json_file_as_dict("GLOBAL_VARIABLES.json")
