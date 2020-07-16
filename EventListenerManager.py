@@ -1,10 +1,8 @@
-from Database import Database
-from FrontendLoader import Gui, MainWindow
 from CustomException import UnimplementedMethodException
 import re
 
 class EventListenerManager:
-    def __init__(self, gui: Gui, db: Database):
+    def __init__(self, gui, db):
         
         self.gui = gui
         self.db = db
@@ -13,9 +11,9 @@ class EventListenerManager:
         raise UnimplementedMethodException("Method must be implemented in inheriting classes")
 
 
-class MainWindowEventListenerManager(EventListenerManager):
-    def __init__(self, gui: MainWindow, db: Database):
-        super(MainWindowEventListenerManager, self).__init__(gui, db)
+class MainWindowListener(EventListenerManager):
+    def __init__(self, gui, db):
+        super(MainWindowListener, self).__init__(gui, db)
 
         self.__add_event_listeners()
 
@@ -86,5 +84,16 @@ class MainWindowEventListenerManager(EventListenerManager):
         edit_database_button = self.gui.widget_objects['editDatabaseButton']
         edit_collection_button = self.gui.widget_objects['editCollectionButton']
 
-        self.__add_button_listener(edit_database_button, "Edit Database Button")
+        edit_database_button.clicked.connect(self.gui.view_edit_db_window)
         self.__add_button_listener(edit_collection_button, "Edit Collection Button")
+
+
+class PopupWindowListener(EventListenerManager):
+    def __init__(self, gui, db):
+        super(PopupWindowListener, self).__init__(gui, db)
+
+        self.__add_event_listeners()
+
+    def __add_event_listeners(self):
+        self.gui.widget_objects['selectButton'].clicked.connect(lambda: print('selectButton Clicked'))
+

@@ -1,6 +1,8 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 import sys
+from EventListenerManager import *
+from Database import *
 
 class Gui(QMainWindow):
 
@@ -11,7 +13,9 @@ class Gui(QMainWindow):
         super(Gui, self).__init__()
         uic.loadUi(gui_file_path, self)
 
-        # a dictionary with all widget ids as strings: { QWidgetType: [id1, id2, ..] }
+        self.gui_file_path = gui_file_path
+
+        # holds all widget ids as strings: { QWidgetType: [id1, id2, ..] }
         self.widget_ids: dict = widget_ids
 
         self.__load_all_qt_objects()
@@ -25,7 +29,6 @@ class Gui(QMainWindow):
         print("Successfully loaded all GUI elements")
 
 
-
 class MainWindow(Gui):
 
     # Stores any function button with which has been assigned a custom operation
@@ -34,6 +37,38 @@ class MainWindow(Gui):
     def __init__(self, widget_ids, gui_file_path):
         super(MainWindow, self).__init__(widget_ids, gui_file_path)
 
+        self.db = Database()
+        self.event_listener_manager = MainWindowListener(self, self.db)
+
+        self.edit_database_window = self.__create_edit_db_window()
+
+
+    def __create_edit_db_window(self):
+        
+        _widget_ids = util.load_json_file_as_dict("EDIT_DATABASE_WIDGET_ID.json")
+        _gui_file_path = "edit_database_gui.ui"
+
+        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
+
+
+    def view_edit_db_window(self):
+        self.setDisabled(True)
+        self.edit_database_window.show()
+
 
     def add_function_button_listener(self, button: QPushButton, button_name: str):
         pass
+
+class PopupWindow(Gui):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
+        super(PopupWindow, self).__init__(widget_ids, gui_file_path)
+        self.parent_gui = parent_gui
+        self.db = db
+
+        self.event_listener_manager = PopupWindowListener(self, self.db)
+
+    
+    def closeEvent(self, a0):
+        self.parent_gui.setDisabled(False)  # return focus to parent
+        self.hide()
+        return super().closeEvent(a0)
