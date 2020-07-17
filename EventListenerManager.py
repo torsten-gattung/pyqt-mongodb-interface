@@ -85,7 +85,7 @@ class MainWindowListener(EventListenerManager):
         edit_collection_button = self.gui.widget_objects['editCollectionButton']
 
         edit_database_button.clicked.connect(self.gui.view_edit_db_window)
-        self.__add_button_listener(edit_collection_button, "Edit Collection Button")
+        edit_collection_button.clicked.connect(self.gui.view_edit_collection_window)
 
 
 class PopupWindowListener(EventListenerManager):

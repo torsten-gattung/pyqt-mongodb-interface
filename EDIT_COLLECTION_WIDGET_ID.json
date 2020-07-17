@@ -1,0 +1,30 @@
+{
+    "QPushButton": [
+        "changeCollectionNameButton",
+        "exportButton",
+        "selectButton",
+
+        "createCollectionButton",
+
+        "dropCollectionButton"
+    ],
+
+    "QListWidget": [
+        "collectionList",
+        "templateList"
+    ],
+
+    "QLabel": [
+        "averageDocumentSizeLabel",
+        "currentCollectionLabel",
+        "currentDatabaseLabel",
+        "databaseCountLabel",
+        "documentCountLabel"
+    ],
+
+    "QTextEdit": [
+        "collectionNameTextEdit",
+
+        "newCollectionNameTextEdit"
+    ]
+}

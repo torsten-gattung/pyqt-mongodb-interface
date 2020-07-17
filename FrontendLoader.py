@@ -40,7 +40,8 @@ class MainWindow(Gui):
         self.db = Database()
         self.event_listener_manager = MainWindowListener(self, self.db)
 
-        self.edit_database_window = self.__create_edit_db_window()
+        self._edit_database_window = self.__create_edit_db_window()
+        self._edit_collection_window = self.__create_edit_collection_window()
 
 
     def __create_edit_db_window(self):
@@ -50,11 +51,19 @@ class MainWindow(Gui):
 
         return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
 
+    def __create_edit_collection_window(self):
+        _widget_ids = util.load_json_file_as_dict("EDIT_COLLECTION_WIDGET_ID.json")
+        _gui_file_path = "edit_collection_gui.ui"
+
+        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
 
     def view_edit_db_window(self):
         self.setDisabled(True)
-        self.edit_database_window.show()
+        self._edit_database_window.show()
 
+    def view_edit_collection_window(self):
+        self.setDisabled(True)
+        self._edit_collection_window.show()
 
     def add_function_button_listener(self, button: QPushButton, button_name: str):
         pass
