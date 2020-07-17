@@ -1,5 +1,8 @@
-from CustomException import UnimplementedMethodException
+from CustomException import *
+from PyQt5.QtWidgets import *
 import re
+
+from time import sleep
 
 class EventListenerManager:
     def __init__(self, gui, db):
@@ -88,13 +91,89 @@ class MainWindowListener(EventListenerManager):
         edit_collection_button.clicked.connect(self.gui.view_edit_collection_window)
 
 
-class PopupWindowListener(EventListenerManager):
+class WelcomeWindowListener(EventListenerManager):
     def __init__(self, gui, db):
-        super(PopupWindowListener, self).__init__(gui, db)
+        super(WelcomeWindowListener, self).__init__(gui, db)
+
+        self._host_field, self._port_field = self.__get_fields()
+
+        self.__add_event_listeners()
+
+
+    def __get_fields(self):
+        _host_field: QLineEdit = self.gui.widget_objects['hostLineEdit']
+        _port_field: QLineEdit = self.gui.widget_objects['portLineEdit']
+
+        return _host_field, _port_field
+
+    def __add_event_listeners(self):
+        self.__add_run_button_listener()
+
+    def __add_run_button_listener(self):
+        self.gui.widget_objects['runButton'].clicked.connect(self.__run_button_on_click)
+
+    def __check_field_values(self):
+        
+        self._host_field.setDisabled(True)
+        self._port_field.setDisabled(True)
+
+        return True
+
+
+    def __run_button_on_click(self):
+
+        # Check fields
+        if not self.__check_field_values():
+            raise BadFieldValueException("Invalid value entered in host field")
+
+        # Attempt Connection
+
+        # ???
+
+        # Profit
+
+        print("//{}:{}".format(self._host_field.text(), self._port_field.text()))
+
+        self.gui.close()
+
+
+class EditDatabaseWindowListener(EventListenerManager):
+    def __init__(self, gui, db):
+        super(EditDatabaseWindowListener, self).__init__(gui, db)
 
         self.__add_event_listeners()
 
     def __add_event_listeners(self):
-        for widget_name, widget in self.gui.widget_objects.items():
-            if re.match(".*Button$", widget_name):
-                widget.clicked.connect(lambda: print("clicked ", widget_name))
+        self.__add_buttons()
+        self.__add_line_edits()
+        self.__add_labels()
+
+    def __add_buttons(self):
+        pass
+
+    def __add_line_edits(self):
+        pass
+
+    def __add_labels(self):
+        pass
+
+
+class EditCollectionWindowListener(EventListenerManager):
+    def __init__(self, gui, db):
+        super(EditCollectionWindowListener, self).__init__(gui, db)
+
+        self.__add_event_listeners()
+
+    def __add_event_listeners(self):
+        self.__add_buttons()
+        self.__add_line_edits()
+        self.__add_labels()
+
+    def __add_buttons(self):
+        pass
+
+    def __add_line_edits(self):
+        pass
+
+    def __add_labels(self):
+        pass

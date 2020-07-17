@@ -58,25 +58,6 @@ QGroupBox {
 	background-color: rgb(248, 248, 248);
 }
 
-QPushButton {
-/*	background-color: rgb(130, 180, 255);*/
-	background-color: rgb(206, 227, 243);
-	font-weight: bold;
-	
-	border: 1px solid black;
-	border-radius: 3px;
-
-}
-
- QPushButton:hover {
-    /* background-color: rgb(46, 60, 255);*/
-	background-color: rgb(213, 229, 235);
-}
-
-QPushButton:pressed {
-	/*background-color: rgb(1, 18, 255);*/
-	background-color: rgb(193, 209, 215);
-}
 </string>
    </property>
    <widget class="QTabWidget" name="tabWidget">
@@ -97,7 +78,7 @@ QPushButton:pressed {
 }</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="editTab">
      <attribute name="title">
@@ -278,7 +259,7 @@ QPushButton:pressed {
       </item>
       <item>
        <property name="text">
-        <string>...</string>
+        <string>Surprise!</string>
        </property>
       </item>
      </widget>
@@ -294,8 +275,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -327,27 +308,6 @@ QPushButton:pressed {
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
-     <widget class="QTextEdit" name="collectionNameTextEdit">
-      <property name="geometry">
-       <rect>
-        <x>400</x>
-        <y>40</y>
-        <width>231</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Consolas</family>
-       </font>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
@@ -373,8 +333,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -431,8 +391,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -449,6 +409,16 @@ QPushButton:pressed {
       </property>
       <property name="flat">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="collectionNameLineEdit">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>40</y>
+        <width>231</width>
+        <height>20</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -815,7 +785,7 @@ QPushButton:pressed {
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>180</y>
+        <y>200</y>
         <width>161</width>
         <height>21</height>
        </rect>
@@ -824,25 +794,14 @@ QPushButton:pressed {
        <string>Give your new collection a name</string>
       </property>
      </widget>
-     <widget class="QTextEdit" name="newCollectionNameTextEdit">
+     <widget class="QLineEdit" name="newCollectionNameLineEdit">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>200</y>
-        <width>231</width>
-        <height>21</height>
+        <y>230</y>
+        <width>251</width>
+        <height>20</height>
        </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Consolas</family>
-       </font>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
      </widget>
     </widget>
@@ -853,8 +812,8 @@ QPushButton:pressed {
      <widget class="QPushButton" name="dropCollectionButton">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>160</y>
+        <x>290</x>
+        <y>150</y>
         <width>181</width>
         <height>51</height>
        </rect>
@@ -895,7 +854,7 @@ QPushButton:pressed {
        </rect>
       </property>
       <property name="text">
-       <string>Warning, This will permanently drop this collection. Be absolutely sure that you want to do this.</string>
+       <string>Warning! This will permanently drop this collection. Be absolutely sure that you want to do this.</string>
       </property>
      </widget>
     </widget>

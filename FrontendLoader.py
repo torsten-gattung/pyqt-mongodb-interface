@@ -47,30 +47,35 @@ class MainWindow(Gui):
         self.db = Database()
         self.event_listener_manager = MainWindowListener(self, self.db)
 
+        self._welcome_window = self.__create_welcome_window()
+        self.__show_welcome_window()
+
         self._edit_database_window = self.__create_edit_db_window()
         self._edit_collection_window = self.__create_edit_collection_window()
-
-        self.welcome_window = self.__create_welcome_window().show()
 
 
     def __create_welcome_window(self):
         _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
         _gui_file_path = global_vars['GUI_FILE_PATHS']['WELCOME']
 
-        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
+        return WelcomeWindow(_widget_ids, _gui_file_path, self, self.db)
+
+    def __show_welcome_window(self):
+        self.setDisabled(True)
+        self._welcome_window.show()
 
     def __create_edit_db_window(self):
         
         _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_DB'])
         _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_DB']
 
-        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
+        return EditDatabaseWindow(_widget_ids, _gui_file_path, self, self.db)
 
     def __create_edit_collection_window(self):
         _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_COL'])
         _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_COL']
 
-        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
+        return EditCollectionWindow(_widget_ids, _gui_file_path, self, self.db)
 
     def view_edit_db_window(self):
         self.setDisabled(True)
@@ -83,16 +88,36 @@ class MainWindow(Gui):
     def add_function_button_listener(self, button: QPushButton, button_name: str):
         pass
 
+
 class PopupWindow(Gui):
     def __init__(self, widget_ids, gui_file_path, parent_gui, db):
         super(PopupWindow, self).__init__(widget_ids, gui_file_path)
         self.parent_gui = parent_gui
         self.db = db
 
-        self.event_listener_manager = PopupWindowListener(self, self.db)
-
     
     def closeEvent(self, a0):
         self.parent_gui.setDisabled(False)  # return 'focus' to parent
         self.hide()
         return super().closeEvent(a0)
+
+
+class WelcomeWindow(PopupWindow):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
+        super(WelcomeWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+
+        self.event_listener_manager = WelcomeWindowListener(self, self.db)
+
+
+class EditDatabaseWindow(PopupWindow):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
+        super(EditDatabaseWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+
+        self.event_listener_manager = EditDatabaseWindowListener(self, self.db)
+
+
+class EditCollectionWindow(PopupWindow):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
+        super(EditCollectionWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+
+        self.event_listener_manager = EditCollectionWindowListener(self, self.db)

@@ -40,10 +40,12 @@
     ],
 
     "QTextEdit": [
-        "manualQueryTextEdit",
-        
-        "hostnameFieldTextEdit",
-        "portFieldTextEdit"
+        "manualQueryTextEdit"
+    ],
+
+    "QLineEdit": [
+        "hostnameFieldLineEdit",
+        "portFieldLineEdit"
     ],
 
     "QComboBox": [

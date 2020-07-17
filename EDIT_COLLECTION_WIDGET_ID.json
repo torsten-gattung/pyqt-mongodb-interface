@@ -22,9 +22,9 @@
         "documentCountLabel"
     ],
 
-    "QTextEdit": [
-        "collectionNameTextEdit",
+    "QLineEdit": [
+        "collectionNameLineEdit",
 
-        "newCollectionNameTextEdit"
+        "newCollectionNameLineEdit"
     ]
 }

@@ -64,25 +64,6 @@ QGroupBox {
 	background-color: rgb(248, 248, 248);
 }
 
-QPushButton {
-/*	background-color: rgb(130, 180, 255);*/
-	background-color: rgb(206, 227, 243);
-	font-weight: bold;
-	
-	border: 1px solid black;
-	border-radius: 3px;
-
-}
-
- QPushButton:hover {
-    /* background-color: rgb(46, 60, 255);*/
-	background-color: rgb(213, 229, 235);
-}
-
-QPushButton:pressed {
-	/*background-color: rgb(1, 18, 255);*/
-	background-color: rgb(193, 209, 215);
-}
 </string>
    </property>
    <widget class="QTabWidget" name="tabWidget">
@@ -118,7 +99,7 @@ QPushButton:pressed {
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="tabBarAutoHide">
      <bool>false</bool>
@@ -364,7 +345,7 @@ Collection</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton#deleteButton {
-	background-color: orangered;
+	background-color: orange;
 }
 
 QPushButton#deleteButton:hover {
@@ -816,30 +797,6 @@ QPushButton#deleteButton:pressed {
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QTextEdit" name="hostnameFieldTextEdit">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>30</y>
-         <width>171</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-        </font>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="placeholderText">
-        <string/>
-       </property>
-      </widget>
       <widget class="QLabel" name="hostnameLabel">
        <property name="geometry">
         <rect>
@@ -882,33 +839,6 @@ QPushButton#deleteButton:pressed {
         <string>Port</string>
        </property>
       </widget>
-      <widget class="QTextEdit" name="portFieldTextEdit">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>30</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-        </font>
-       </property>
-       <property name="inputMethodHints">
-        <set>Qt::ImhDigitsOnly</set>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="placeholderText">
-        <string/>
-       </property>
-      </widget>
       <widget class="QLabel" name="currentlyConnectedLabel">
        <property name="geometry">
         <rect>
@@ -926,6 +856,26 @@ QPushButton#deleteButton:pressed {
        </property>
        <property name="text">
         <string>Currently connected to //localhost on port 27017</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="hostnameFieldLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>30</y>
+         <width>171</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="portFieldLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>30</y>
+         <width>81</width>
+         <height>20</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -1290,7 +1240,7 @@ p, li { white-space: pre-wrap; }
         </rect>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;This software uses the MIT License&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Copyright 2020 Abdulaziz Nal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Copyright 2020 Abdulaziz Nal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
@@ -1417,8 +1367,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>functionElevenButton</tabstop>
   <tabstop>functionSixButton</tabstop>
   <tabstop>functionTwelveButton</tabstop>
-  <tabstop>hostnameFieldTextEdit</tabstop>
-  <tabstop>portFieldTextEdit</tabstop>
   <tabstop>connectButton</tabstop>
   <tabstop>availableDatabaseComboBox</tabstop>
   <tabstop>availableCollectionComboBox</tabstop>

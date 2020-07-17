@@ -46,25 +46,6 @@ QGroupBox {
 	background-color: rgb(248, 248, 248);
 }
 
-QPushButton {
-/*	background-color: rgb(130, 180, 255);*/
-	background-color: rgb(206, 227, 243);
-	font-weight: bold;
-	
-	border: 1px solid black;
-	border-radius: 3px;
-
-}
-
- QPushButton:hover {
-    /* background-color: rgb(46, 60, 255);*/
-	background-color: rgb(213, 229, 235);
-}
-
-QPushButton:pressed {
-	/*background-color: rgb(1, 18, 255);*/
-	background-color: rgb(193, 209, 215);
-}
 </string>
    </property>
    <widget class="QTabWidget" name="tabWidget">
@@ -141,8 +122,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -430,8 +411,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -467,8 +448,8 @@ QPushButton:pressed {
       <property name="font">
        <font>
         <pointsize>10</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="cursor">
@@ -493,14 +474,17 @@ QPushButton:pressed {
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>481</width>
+        <x>100</x>
+        <y>130</y>
+        <width>561</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>To delete the current active database, press ' Delete '</string>
+       <string>Warning! This will permanently delete this database and all its collections. Make sure you absolutely want to do this.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
