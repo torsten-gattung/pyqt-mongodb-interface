@@ -3,17 +3,20 @@ import utility as util
 
 
 global_vars: dict = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
-widget_ids: dict = util.load_json_file_as_dict("WIDGET_ID.json")
+widget_ids: dict = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['MAIN'])
 
 
-def start_program(widget_ids: dict, gui_file_path: str):
+def start_program(global_vars=global_vars):
     app = QApplication(sys.argv)
 
-    main_window = MainWindow(widget_ids, gui_file_path)
+    _widget_ids: dict = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['MAIN'])
+    _gui_file_path = global_vars['GUI_FILE_PATHS']['MAIN']
+
+    main_window = MainWindow(_widget_ids, _gui_file_path)
 
     main_window.show()
     app.exec_()
 
 
 if __name__ == "__main__":
-    start_program(widget_ids, global_vars['GUI_FILE_PATH'])
+    start_program(global_vars)

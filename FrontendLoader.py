@@ -1,8 +1,13 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 import sys
+import utility as util
 from EventListenerManager import *
 from Database import *
+
+
+global_vars = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
+
 
 class Gui(QMainWindow):
 
@@ -35,7 +40,7 @@ class MainWindow(Gui):
     active_function_buttons: [str]
 
     def __init__(self, widget_ids, gui_file_path):
-        super(MainWindow, self).__init__(widget_ids, gui_file_path)
+        super(MainWindow, self).__init__(widget_ids, gui_file_path) 
 
         self.db = Database()
         self.event_listener_manager = MainWindowListener(self, self.db)
@@ -46,14 +51,14 @@ class MainWindow(Gui):
 
     def __create_edit_db_window(self):
         
-        _widget_ids = util.load_json_file_as_dict("EDIT_DATABASE_WIDGET_ID.json")
-        _gui_file_path = "edit_database_gui.ui"
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_DB'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_DB']
 
         return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
 
     def __create_edit_collection_window(self):
-        _widget_ids = util.load_json_file_as_dict("EDIT_COLLECTION_WIDGET_ID.json")
-        _gui_file_path = "edit_collection_gui.ui"
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_COL'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_COL']
 
         return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
 
@@ -78,6 +83,6 @@ class PopupWindow(Gui):
 
     
     def closeEvent(self, a0):
-        self.parent_gui.setDisabled(False)  # return focus to parent
+        self.parent_gui.setDisabled(False)  # return 'focus' to parent
         self.hide()
         return super().closeEvent(a0)

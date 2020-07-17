@@ -4,5 +4,15 @@
         "PORT": "27017"
     },
 
-    "GUI_FILE_PATH": "static_gui.ui"
+    "GUI_FILE_PATHS": {
+        "MAIN": "static_gui.ui",
+        "EDIT_DB": "edit_database_gui.ui",
+        "EDIT_COL": "edit_collection_gui.ui"
+    },
+
+    "WIDGET_ID_FILE_PATHS": {
+        "MAIN": "WIDGET_ID.json",
+        "EDIT_DB": "EDIT_DATABASE_WIDGET_ID.json",
+        "EDIT_COL": "EDIT_COLLECTION_WIDGET_ID.json"
+    }
 }
