@@ -1,0 +1,10 @@
+{
+    "QLineEdit": [
+        "hostLineEdit",
+        "portLineEdit"
+    ],
+
+    "QPushButton": [
+        "runButton"
+    ]
+}

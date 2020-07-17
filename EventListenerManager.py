@@ -95,5 +95,6 @@ class PopupWindowListener(EventListenerManager):
         self.__add_event_listeners()
 
     def __add_event_listeners(self):
-        self.gui.widget_objects['selectButton'].clicked.connect(lambda: print('selectButton Clicked'))
-
+        for widget_name, widget in self.gui.widget_objects.items():
+            if re.match(".*Button$", widget_name):
+                widget.clicked.connect(lambda: print("clicked ", widget_name))

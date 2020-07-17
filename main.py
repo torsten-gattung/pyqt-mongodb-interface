@@ -14,7 +14,6 @@ def start_program(global_vars=global_vars):
 
     main_window = MainWindow(_widget_ids, _gui_file_path)
 
-    main_window.show()
     app.exec_()
 
 

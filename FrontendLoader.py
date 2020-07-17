@@ -42,12 +42,22 @@ class MainWindow(Gui):
     def __init__(self, widget_ids, gui_file_path):
         super(MainWindow, self).__init__(widget_ids, gui_file_path) 
 
+        self.show()
+
         self.db = Database()
         self.event_listener_manager = MainWindowListener(self, self.db)
 
         self._edit_database_window = self.__create_edit_db_window()
         self._edit_collection_window = self.__create_edit_collection_window()
 
+        self.welcome_window = self.__create_welcome_window().show()
+
+
+    def __create_welcome_window(self):
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['WELCOME']
+
+        return PopupWindow(_widget_ids, _gui_file_path, self, self.db)
 
     def __create_edit_db_window(self):
         
