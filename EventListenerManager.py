@@ -177,3 +177,18 @@ class EditCollectionWindowListener(EventListenerManager):
 
     def __add_labels(self):
         pass
+
+
+class DynamicPopupWindowListener(EventListenerManager):
+    def __init__(self, gui, db):
+        super().__init__(gui, db)
+
+        self.__add_field_listeners()
+
+    def __add_field_listeners(self):
+        for widget in self.gui.fields_widget.children():
+            
+            expected_type = type(QLineEdit())
+            
+            if type(widget) == expected_type:
+                widget.setText("Listeners are up and runnin'!")

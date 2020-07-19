@@ -13,10 +13,11 @@ class Database:
 
         self.available_db_names: [] = self.__get_available_db_names()
 
-        self.current_active_database: str = None
-        self.current_active_collection: str = None
+        self.current_chosen_database: str = "subscribe2pewdiepie"
+        self.current_chosen_collection: str = "like_and_subscribe"
 
-        self.current_active_database_collection_names: [str] = None
+        self.current_collection_names: [str] = ["test_clction_name{}".format(num) for num in range(10)]
+        self.current_collection_columns: [str] = ["test_field{}".format(num) for num in range(10)]
 
     def __get_available_db_names(self):
         return self._client.list_database_names()
@@ -29,10 +30,10 @@ class Database:
     def select_collection(self, collection_name: str):
         # NOTE: Unfinished
         # Make sure a database has already been selected
-        if self.current_active_database is None:
+        if self.current_chosen_database is None:
             raise Exception("No database has been selected yet.")
         
-        if collection_name in self.current_active_database_collection_names:
+        if collection_name in self.current_collection_names:
             print("Yup")
 
     def execute_manual_query(self, manual_query: str):

@@ -34,9 +34,65 @@ class Gui(QMainWindow):
         print("Successfully loaded all GUI elements")
 
 
+
+class PopupWindow(Gui):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
+        super(PopupWindow, self).__init__(widget_ids, gui_file_path)
+        self.parent_gui = parent_gui
+        self.db = db
+
+    
+    def closeEvent(self, a0):
+        self.parent_gui.setDisabled(False)  # return 'focus' to parent
+        self.hide()
+        return super().closeEvent(a0)
+
+
+class DynamicPopupWindow(PopupWindow):
+    def __init__(self, widget_ids, gui_file_path, parent_gui, db, disable_field_edit=False, fields=[]):
+        super(DynamicPopupWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+
+
+        # self.collection_columns: [str] = self.db.current_collection_columns
+        self.collection_columns = fields
+
+        self.fields_widget: QWidget = self.widget_objects['fieldsWidget']
+        self.__add_fields()
+
+        self.event_listener_manager = DynamicPopupWindowListener(self, self.db)
+
+    def __create_qobjects(self):
+        labels = [QLabel(col_name) for col_name in self.collection_columns]
+        field_widgets = [QLineEdit() for _ in self.collection_columns]
+
+        return labels, field_widgets
+
+    @staticmethod
+    def __set_widgets_size(labels, field_widgets):
+        [label.setFixedSize(75, 25) for label in labels]
+        [widget.setFixedSize(175, 25) for widget in field_widgets]
+
+    @staticmethod
+    def __add_to_layout(layout_, labels, field_widgets):
+        [layout_.addWidget(label, index, 0) for index, label in enumerate(labels)]
+        [layout_.addWidget(widget, index, 1) for index, widget in enumerate(field_widgets)]
+
+    def __add_fields(self):
+
+        layout_ = QGridLayout()
+
+        labels, field_widgets = self.__create_qobjects()
+
+        self.__set_widgets_size(labels, field_widgets)
+
+        self.__add_to_layout(layout_, labels, field_widgets)
+
+        self.fields_widget.setLayout(layout_)
+
+
 class MainWindow(Gui):
 
-    # Stores any function button with which has been assigned a custom operation
+    # Stores assigned function buttons
     active_function_buttons: [str]
 
     def __init__(self, widget_ids, gui_file_path):
@@ -52,7 +108,6 @@ class MainWindow(Gui):
 
         self._edit_database_window = self.__create_edit_db_window()
         self._edit_collection_window = self.__create_edit_collection_window()
-
 
     def __create_welcome_window(self):
         _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
@@ -87,19 +142,6 @@ class MainWindow(Gui):
 
     def add_function_button_listener(self, button: QPushButton, button_name: str):
         pass
-
-
-class PopupWindow(Gui):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
-        super(PopupWindow, self).__init__(widget_ids, gui_file_path)
-        self.parent_gui = parent_gui
-        self.db = db
-
-    
-    def closeEvent(self, a0):
-        self.parent_gui.setDisabled(False)  # return 'focus' to parent
-        self.hide()
-        return super().closeEvent(a0)
 
 
 class WelcomeWindow(PopupWindow):
