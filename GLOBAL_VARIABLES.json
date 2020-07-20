@@ -8,13 +8,15 @@
         "MAIN": "static_gui.ui",
         "WELCOME": "welcome_gui.ui",
         "EDIT_DB": "edit_database_gui.ui",
-        "EDIT_COL": "edit_collection_gui.ui"
+        "EDIT_COL": "edit_collection_gui.ui",
+        "CREATE": "create_item_gui.ui"
     },
 
     "WIDGET_ID_FILE_PATHS": {
         "MAIN": "WIDGET_ID.json",
         "WELCOME": "WELCOME_WIDGET_ID.json",
         "EDIT_DB": "EDIT_DATABASE_WIDGET_ID.json",
-        "EDIT_COL": "EDIT_COLLECTION_WIDGET_ID.json"
+        "EDIT_COL": "EDIT_COLLECTION_WIDGET_ID.json",
+        "CREATE": "CREATE_WIDGET_ID.json"
     }
 }

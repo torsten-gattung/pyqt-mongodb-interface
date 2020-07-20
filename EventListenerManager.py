@@ -70,7 +70,7 @@ class MainWindowListener(EventListenerManager):
 
         #####
 
-        create_button.clicked.connect(create_query)
+        create_button.clicked.connect(self.gui.show_create_window)
         filter_button.clicked.connect(filter_query)
         modify_button.clicked.connect(modify_query)
         delete_button.clicked.connect(delete_query)
@@ -191,4 +191,24 @@ class DynamicPopupWindowListener(EventListenerManager):
             expected_type = type(QLineEdit())
             
             if type(widget) == expected_type:
-                widget.setText("Listeners are up and runnin'!")
+                widget.setText("This is development code, so I can put anything I want here")
+
+
+class CreateWindowListener(DynamicPopupWindowListener):
+    def __init__(self, gui, db):
+        super().__init__(gui, db)
+
+        self.__add_button_listener()
+
+    def __add_button_listener(self):
+        self.gui.widget_objects['createButton'].clicked.connect(lambda: print("Created Item (fake)"))
+        self.gui.widget_objects['createButton'].clicked.connect(self.__list_all_field_data)
+
+    def __list_all_field_data(self):
+        for widget in self.gui.fields_widget.children():
+
+            if type(widget) == type(QLabel):
+                print(field.text(), end="")
+
+            if type(widget) == type(QLineEdit()):
+                print(widget.text())
