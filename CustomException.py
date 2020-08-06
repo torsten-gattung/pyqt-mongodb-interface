@@ -1,14 +1,14 @@
 
 class GeneralException(Exception):
-    def __init__(self, message: str):
+    def __init__(self, message, *args, **kwargs):
         super().__init__(message)
 
 
-class UnimplementedMethodException(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
+class UnimplementedMethodException(GeneralException):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class BadFieldValueException(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

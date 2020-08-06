@@ -4,6 +4,9 @@ import re
 
 from time import sleep
 
+
+# region Base Classes
+
 class EventListenerManager:
     def __init__(self, gui, db):
         
@@ -15,8 +18,8 @@ class EventListenerManager:
 
 
 class MainWindowListener(EventListenerManager):
-    def __init__(self, gui, db):
-        super(MainWindowListener, self).__init__(gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.__add_event_listeners()
 
@@ -91,9 +94,27 @@ class MainWindowListener(EventListenerManager):
         edit_collection_button.clicked.connect(self.gui.view_edit_collection_window)
 
 
+class DynamicPopupWindowListener(EventListenerManager):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.__add_field_listeners()
+
+    def __add_field_listeners(self):
+        for widget in self.gui.fields_widget.children():
+            
+            expected_type = type(QLineEdit())
+            
+            if type(widget) == expected_type:
+                widget.setText("This is development code, so I can put anything I want here")
+
+
+# endregion Base Classes
+
+
 class WelcomeWindowListener(EventListenerManager):
-    def __init__(self, gui, db):
-        super(WelcomeWindowListener, self).__init__(gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self._host_field, self._port_field = self.__get_fields()
 
@@ -137,9 +158,11 @@ class WelcomeWindowListener(EventListenerManager):
         self.gui.close()
 
 
+# region Edit DB / Collection Window Listeners
+
 class EditDatabaseWindowListener(EventListenerManager):
-    def __init__(self, gui, db):
-        super(EditDatabaseWindowListener, self).__init__(gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.__add_event_listeners()
 
@@ -159,8 +182,8 @@ class EditDatabaseWindowListener(EventListenerManager):
 
 
 class EditCollectionWindowListener(EventListenerManager):
-    def __init__(self, gui, db):
-        super(EditCollectionWindowListener, self).__init__(gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.__add_event_listeners()
 
@@ -179,24 +202,14 @@ class EditCollectionWindowListener(EventListenerManager):
         pass
 
 
-class DynamicPopupWindowListener(EventListenerManager):
-    def __init__(self, gui, db):
-        super().__init__(gui, db)
+# endregion Edit DB / Collection Window Listeners
 
-        self.__add_field_listeners()
 
-    def __add_field_listeners(self):
-        for widget in self.gui.fields_widget.children():
-            
-            expected_type = type(QLineEdit())
-            
-            if type(widget) == expected_type:
-                widget.setText("This is development code, so I can put anything I want here")
-
+# region CRUD Window Listeners
 
 class CreateWindowListener(DynamicPopupWindowListener):
-    def __init__(self, gui, db):
-        super().__init__(gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.__add_button_listener()
 
@@ -212,3 +225,20 @@ class CreateWindowListener(DynamicPopupWindowListener):
 
             if type(widget) == type(QLineEdit()):
                 print(widget.text())
+
+
+class FilterWindowListener(DynamicPopupWindowListener):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ModifyWindowListener(DynamicPopupWindowListener):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class DeleteWindowListener(DynamicPopupWindowListener):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+# endregion CRUD Window Listeners

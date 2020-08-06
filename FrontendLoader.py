@@ -9,13 +9,15 @@ from Database import *
 global_vars = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
 
 
-class Gui(QMainWindow):
+# region Base Classes
 
+class Gui(QMainWindow):
+    
     # Stores all loaded widgets for easy access throughout program
     widget_objects = {}
 
     def __init__(self, widget_ids: dict, gui_file_path: str):
-        super(Gui, self).__init__()
+        super().__init__()
         uic.loadUi(gui_file_path, self)
 
         self.gui_file_path = gui_file_path
@@ -34,9 +36,76 @@ class Gui(QMainWindow):
         print("Successfully loaded all GUI elements")
 
 
+class MainWindow(Gui):
+    
+    # Stores assigned function buttons
+    active_function_buttons: [str]
+
+    def __init__(self, widget_ids, gui_file_path):
+        super().__init__(widget_ids, gui_file_path) 
+
+        self.show()
+
+        self.db = MongoHandler()
+        self.event_listener_manager = MainWindowListener(self, self.db)
+
+        self._welcome_window = self.__create_welcome_window()
+        self.__show_welcome_window()
+
+        self._edit_database_window = self.__create_edit_db_window()
+        self._edit_collection_window = self.__create_edit_collection_window()
+        self._create_window = self.__create_create_window()
+
+    def __create_welcome_window(self):
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['WELCOME']
+
+        return WelcomeWindow(self, self.db, _widget_ids, _gui_file_path)
+
+    def __show_welcome_window(self):
+        self.setDisabled(True)
+        self._welcome_window.show()
+
+    def __create_edit_db_window(self):
+        
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_DB'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_DB']
+
+        return EditDatabaseWindow(self, self.db, _widget_ids, _gui_file_path)
+
+    def __create_edit_collection_window(self):
+        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_COL'])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_COL']
+
+        return EditCollectionWindow(self, self.db, _widget_ids, _gui_file_path)
+
+    def __create_create_window(self):
+        _widget_id = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']["CREATE"])
+        _gui_file_path = global_vars['GUI_FILE_PATHS']["CREATE"]
+
+        _fields = ["field{}".format(num) for num in range(25)]
+
+        return CreateWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
+
+    def show_create_window(self):
+        self.setDisabled(True)
+        self._create_window.show()
+
+    def view_edit_db_window(self):
+        self.setDisabled(True)
+        self._edit_database_window.show()
+
+    def view_edit_collection_window(self):
+        self.setDisabled(True)
+        self._edit_collection_window.show()
+
+    def add_function_button_listener(self, button: QPushButton, button_name: str):
+        pass
+
+
 class PopupWindow(Gui):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
-        super(PopupWindow, self).__init__(widget_ids, gui_file_path)
+    def __init__(self, parent_gui, db, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.parent_gui = parent_gui
         self.db = db
 
@@ -48,8 +117,8 @@ class PopupWindow(Gui):
 
 
 class DynamicPopupWindow(PopupWindow):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db, disable_field_edit=False, fields=[]):
-        super(DynamicPopupWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+    def __init__(self, disable_field_edit=False, fields=[], *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # self.collection_columns: [str] = self.db.current_collection_columns
         self.collection_columns = fields
@@ -88,96 +157,58 @@ class DynamicPopupWindow(PopupWindow):
         self.fields_widget.setLayout(layout_)
 
 
-class MainWindow(Gui):
-
-    # Stores assigned function buttons
-    active_function_buttons: [str]
-
-    def __init__(self, widget_ids, gui_file_path):
-        super(MainWindow, self).__init__(widget_ids, gui_file_path) 
-
-        self.show()
-
-        self.db = Database()
-        self.event_listener_manager = MainWindowListener(self, self.db)
-
-        self._welcome_window = self.__create_welcome_window()
-        self.__show_welcome_window()
-
-        self._edit_database_window = self.__create_edit_db_window()
-        self._edit_collection_window = self.__create_edit_collection_window()
-        self._create_window = self.__create_create_window()
-
-    def __create_welcome_window(self):
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['WELCOME']
-
-        return WelcomeWindow(_widget_ids, _gui_file_path, self, self.db)
-
-    def __show_welcome_window(self):
-        self.setDisabled(True)
-        self._welcome_window.show()
-
-    def __create_edit_db_window(self):
-        
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_DB'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_DB']
-
-        return EditDatabaseWindow(_widget_ids, _gui_file_path, self, self.db)
-
-    def __create_edit_collection_window(self):
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_COL'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_COL']
-
-        return EditCollectionWindow(_widget_ids, _gui_file_path, self, self.db)
-
-    def __create_create_window(self):
-        _widget_id = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']["CREATE"])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']["CREATE"]
-
-        _fields = ["field{}".format(num) for num in range(25)]
-
-        return CreateWindow(_widget_id, _gui_file_path, self, self.db, False, _fields)
-
-    def show_create_window(self):
-        self.setDisabled(True)
-        self._create_window.show()
-
-    def view_edit_db_window(self):
-        self.setDisabled(True)
-        self._edit_database_window.show()
-
-    def view_edit_collection_window(self):
-        self.setDisabled(True)
-        self._edit_collection_window.show()
-
-    def add_function_button_listener(self, button: QPushButton, button_name: str):
-        pass
+# endregion Base Classes
 
 
 class WelcomeWindow(PopupWindow):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
-        super(WelcomeWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.event_listener_manager = WelcomeWindowListener(self, self.db)
 
 
+# region Edit DB / Collection Buttons
+
+
 class EditDatabaseWindow(PopupWindow):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
-        super(EditDatabaseWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.event_listener_manager = EditDatabaseWindowListener(self, self.db)
 
 
 class EditCollectionWindow(PopupWindow):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db):
-        super(EditCollectionWindow, self).__init__(widget_ids, gui_file_path, parent_gui, db)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.event_listener_manager = EditCollectionWindowListener(self, self.db)
 
 
+# endregion Edit DB / Collcetion Buttons
+
+
+# region CRUD Buttons
+
 class CreateWindow(DynamicPopupWindow):
-    def __init__(self, widget_ids, gui_file_path, parent_gui, db, disable_field_edit=False, fields=[]):
-        super().__init__(widget_ids, gui_file_path, parent_gui, db, disable_field_edit=disable_field_edit, fields=fields)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self._event_listener_manager = CreateWindowListener(self, self.db)
+
+
+class FilterWindow(DynamicPopupWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ModifyWindow(DynamicPopupWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class DeleteWindow(DynamicPopupWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+#endregion CRUD Buttons

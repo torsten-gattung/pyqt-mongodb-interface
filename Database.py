@@ -6,7 +6,7 @@ import sys
 global_vars: dict = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
 
 
-class Database:
+class MongoHandler:
 
     def __init__(self):
         self._client = MongoClient(global_vars["SERVER"]["HOSTNAME"])
@@ -57,7 +57,17 @@ class Database:
     # endregion
             
 
-def run_cli(db: Database):
+class Database:
+    def __init__(self):
+        pass
+
+
+class Collection:
+    def __init__(self):
+        pass
+
+
+def run_cli(db: MongoHandler):
     print("\n\nCLI for testing Database class")
     print("You can run any command available by the pymongo module")
     print("example: db._client.list_database_names()")
@@ -82,7 +92,7 @@ def run_cli(db: Database):
 def main():
     print("Attempting connection to database...")
 
-    db = Database()
+    db = MongoHandler()
 
     print("Successfully Connected to database on {}:{}".format(global_vars['SERVER']['HOSTNAME'], global_vars['SERVER']['PORT']))
 
