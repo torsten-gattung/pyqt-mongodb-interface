@@ -54,7 +54,11 @@ class MainWindow(Gui):
 
         self._edit_database_window = self.__create_edit_db_window()
         self._edit_collection_window = self.__create_edit_collection_window()
+
         self._create_window = self.__create_create_window()
+        self._modify_window = self.__create_modify_window()
+        self._filter_window = self.__create_filter_window()
+        self._delete_window = self.__create_delete_window()
 
     def __create_welcome_window(self):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['WELCOME'])
@@ -79,6 +83,8 @@ class MainWindow(Gui):
 
         return EditCollectionWindow(self, self.db, _widget_ids, _gui_file_path)
 
+    # region CRUD windows
+
     def __create_create_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["CREATE"])
         _gui_file_path = global_vars['GUI']["CREATE"]
@@ -87,9 +93,47 @@ class MainWindow(Gui):
 
         return CreateWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
+    def __create_modify_window(self):
+        _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["MODIFY"])
+        _gui_file_path = global_vars['GUI']["MODIFY"]
+
+        _fields = ["field{}".format(num) for num in range(25)]
+
+        return ModifyWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
+
+    def __create_filter_window(self):
+        _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["FILTER"])
+        _gui_file_path = global_vars['GUI']["FILTER"]
+
+        _fields = ["field{}".format(num) for num in range(25)]
+
+        return FilterWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
+
+    def __create_delete_window(self):
+        _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["DELETE"])
+        _gui_file_path = global_vars['GUI']["DELETE"]
+
+        _fields = ["field{}".format(num) for num in range(25)]
+
+        return DeleteWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)                    
+
     def show_create_window(self):
         self.setDisabled(True)
         self._create_window.show()
+
+    def show_modify_window(self):
+        self.setDisabled(True)
+        self._modify_window.show()
+
+    def show_filter_window(self):
+        self.setDisabled(True)
+        self._filter_window.show()
+
+    def show_delete_window(self):
+        self.setDisabled(True)
+        self._delete_window.show()
+
+    # endregion CRUD windows
 
     def view_edit_db_window(self):
         self.setDisabled(True)
@@ -200,15 +244,20 @@ class FilterWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self._event_listener_manager = FilterWindowListener(self, self.db)
+
 
 class ModifyWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self._event_listener_manager = ModifyWindowListener(self, self.db)
 
 
 class DeleteWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self._event_listener_manager = DeleteWindowListener(self, self.db)
 
 #endregion CRUD Buttons

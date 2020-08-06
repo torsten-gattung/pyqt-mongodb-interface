@@ -1,0 +1,9 @@
+{
+    "QWidget": [
+        "fieldsWidget"
+    ],
+
+    "QPushButton": [
+        "updateButton"
+    ]
+}

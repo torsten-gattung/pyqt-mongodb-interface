@@ -74,9 +74,9 @@ class MainWindowListener(EventListenerManager):
         #####
 
         create_button.clicked.connect(self.gui.show_create_window)
-        filter_button.clicked.connect(filter_query)
-        modify_button.clicked.connect(modify_query)
-        delete_button.clicked.connect(delete_query)
+        filter_button.clicked.connect(self.gui.show_filter_window)
+        modify_button.clicked.connect(self.gui.show_modify_window)
+        delete_button.clicked.connect(self.gui.show_delete_window)
 
     def __add_function_buttons_listeners(self):
 
@@ -231,14 +231,59 @@ class FilterWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.__add_button_listener()
+
+    def __add_button_listener(self):
+        self.gui.widget_objects['filterButton'].clicked.connect(lambda: print("Filtered Item (fake)"))
+        self.gui.widget_objects['filterButton'].clicked.connect(self.__list_all_field_data)
+
+    def __list_all_field_data(self):
+        for widget in self.gui.fields_widget.children():
+
+            if type(widget) == type(QLabel):
+                print(field.text(), end="")
+
+            if type(widget) == type(QLineEdit()):
+                print(widget.text())
+
 
 class ModifyWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.__add_button_listener()
+
+    def __add_button_listener(self):
+        self.gui.widget_objects['updateButton'].clicked.connect(lambda: print("Updated Item (fake)"))
+        self.gui.widget_objects['updateButton'].clicked.connect(self.__list_all_field_data)
+
+    def __list_all_field_data(self):
+        for widget in self.gui.fields_widget.children():
+
+            if type(widget) == type(QLabel):
+                print(field.text(), end="")
+
+            if type(widget) == type(QLineEdit()):
+                print(widget.text())
+
 
 class DeleteWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.__add_button_listener()
+
+    def __add_button_listener(self):
+        self.gui.widget_objects['deleteButton'].clicked.connect(lambda: print("Deleted Item (fake)"))
+        self.gui.widget_objects['deleteButton'].clicked.connect(self.__list_all_field_data)
+
+    def __list_all_field_data(self):
+        for widget in self.gui.fields_widget.children():
+
+            if type(widget) == type(QLabel):
+                print(field.text(), end="")
+
+            if type(widget) == type(QLineEdit()):
+                print(widget.text())
 
 # endregion CRUD Window Listeners

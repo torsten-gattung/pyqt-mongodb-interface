@@ -9,7 +9,12 @@
         "WELCOME": "ui/welcome_gui.ui",
         "EDIT_DB": "ui/edit_database_gui.ui",
         "EDIT_COL": "ui/edit_collection_gui.ui",
-        "CREATE": "ui/create_item_gui.ui"
+
+        "CREATE": "ui/create_item_gui.ui",
+        "MODIFY": "ui/modify_item_gui.ui",
+        "FILTER": "ui/filter_item_gui.ui",
+        "DELETE": "ui/delete_item_gui.ui"
+
     },
 
     "WIDGET_ID": {
@@ -17,6 +22,11 @@
         "WELCOME": "widget_ids/WELCOME_WIDGET_ID.json",
         "EDIT_DB": "widget_ids/EDIT_DATABASE_WIDGET_ID.json",
         "EDIT_COL": "widget_ids/EDIT_COLLECTION_WIDGET_ID.json",
-        "CREATE": "widget_ids/CREATE_WIDGET_ID.json"
+
+        "CREATE": "widget_ids/CREATE_WIDGET_ID.json",
+        "MODIFY": "widget_ids/MODIFY_WIDGET_ID.json",
+        "FILTER": "widget_ids/FILTER_WIDGET_ID.json",
+        "DELETE": "widget_ids/DELETE_WIDGET_ID.json"
+
     }
 }
