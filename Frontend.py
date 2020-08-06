@@ -1,12 +1,12 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 import sys
-import utility as util
-from EventListenerManager import *
-from Database import *
+import toolbox as util
+from Events import *
+from Backend import *
 
 
-global_vars = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
+global_vars = util.json_to_dict("GLOBAL_VARIABLES.json")
 
 
 # region Base Classes
@@ -57,8 +57,8 @@ class MainWindow(Gui):
         self._create_window = self.__create_create_window()
 
     def __create_welcome_window(self):
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['WELCOME'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['WELCOME']
+        _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['WELCOME'])
+        _gui_file_path = global_vars['GUI']['WELCOME']
 
         return WelcomeWindow(self, self.db, _widget_ids, _gui_file_path)
 
@@ -68,20 +68,20 @@ class MainWindow(Gui):
 
     def __create_edit_db_window(self):
         
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_DB'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_DB']
+        _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_DB'])
+        _gui_file_path = global_vars['GUI']['EDIT_DB']
 
         return EditDatabaseWindow(self, self.db, _widget_ids, _gui_file_path)
 
     def __create_edit_collection_window(self):
-        _widget_ids = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']['EDIT_COL'])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']['EDIT_COL']
+        _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_COL'])
+        _gui_file_path = global_vars['GUI']['EDIT_COL']
 
         return EditCollectionWindow(self, self.db, _widget_ids, _gui_file_path)
 
     def __create_create_window(self):
-        _widget_id = util.load_json_file_as_dict(global_vars['WIDGET_ID_FILE_PATHS']["CREATE"])
-        _gui_file_path = global_vars['GUI_FILE_PATHS']["CREATE"]
+        _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["CREATE"])
+        _gui_file_path = global_vars['GUI']["CREATE"]
 
         _fields = ["field{}".format(num) for num in range(25)]
 

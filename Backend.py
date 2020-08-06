@@ -1,9 +1,9 @@
 from pymongo import MongoClient
-import utility as util
+import toolbox as util
 import sys
 
 
-global_vars: dict = util.load_json_file_as_dict("GLOBAL_VARIABLES.json")
+global_vars: dict = util.json_to_dict("GLOBAL_VARIABLES.json")
 
 
 class MongoHandler:

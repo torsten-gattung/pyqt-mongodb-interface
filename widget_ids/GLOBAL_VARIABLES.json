@@ -1,0 +1,22 @@
+{
+    "SERVER": {
+        "HOSTNAME": "localhost",
+        "PORT": "27017"
+    },
+
+    "GUI_FILE_PATHS": {
+        "MAIN": "ui/static_gui.ui",
+        "WELCOME": "ui/welcome_gui.ui",
+        "EDIT_DB": "ui/edit_database_gui.ui",
+        "EDIT_COL": "ui/edit_collection_gui.ui",
+        "CREATE": "ui/create_item_gui.ui"
+    },
+
+    "WIDGET_ID_FILE_PATHS": {
+        "MAIN": "WIDGET_ID.json",
+        "WELCOME": "WELCOME_WIDGET_ID.json",
+        "EDIT_DB": "EDIT_DATABASE_WIDGET_ID.json",
+        "EDIT_COL": "EDIT_COLLECTION_WIDGET_ID.json",
+        "CREATE": "CREATE_WIDGET_ID.json"
+    }
+}

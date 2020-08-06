@@ -1,4 +1,4 @@
-from CustomException import *
+from custom_exceptions import *
 from PyQt5.QtWidgets import *
 import re
 
