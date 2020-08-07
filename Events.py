@@ -43,9 +43,6 @@ class MainWindowListener(EventListenerManager):
 
         submit_button.clicked.connect(execute_manual_query)
     
-    def __add_button_listener(self, button, button_name: str):
-        button.clicked.connect(lambda: print("Clicked " + button_name))
-
     def __add_crud_buttons_listeners(self):
         create_button = self.gui.widget_objects['createButton']
         filter_button = self.gui.widget_objects['filterButton']
@@ -84,6 +81,9 @@ class MainWindowListener(EventListenerManager):
             # this RegEx catches all objects with id ~= "functionNumberButton"
             if re.match("^function.*Button$", button_id):
                 self.__add_button_listener(button, button_id)
+
+    def __add_button_listener(self, button, button_name: str):
+        button.clicked.connect(lambda: self.gui.show_function_window(button_name, button))
 
     def __add_edit_db_and_collection_buttons_listeners(self):
 

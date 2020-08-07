@@ -1,0 +1,14 @@
+{
+    "QLineEdit": [
+        "buttonNameLineEdit"
+    ],
+
+    "QTextEdit": [
+        "commandTextEdit"
+    ],
+
+    "QPushButton": [
+        "okayButton",
+        "cancelButton"
+    ]
+}

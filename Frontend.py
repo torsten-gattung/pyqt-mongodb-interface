@@ -41,8 +41,8 @@ class MainWindow(Gui):
     # Stores assigned function buttons
     active_function_buttons: [str]
 
-    def __init__(self, widget_ids, gui_file_path):
-        super().__init__(widget_ids, gui_file_path) 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs) 
 
         self.show()
 
@@ -59,6 +59,8 @@ class MainWindow(Gui):
         self._modify_window = self.__create_modify_window()
         self._filter_window = self.__create_filter_window()
         self._delete_window = self.__create_delete_window()
+
+        self.function_windows = dict(self.__create_function_windows())
 
     def __create_welcome_window(self):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['WELCOME'])
@@ -134,6 +136,31 @@ class MainWindow(Gui):
         self._delete_window.show()
 
     # endregion CRUD windows
+
+    # region Fuction Windows
+
+    def __function_buttons(self):
+        for widget_id, widget in self.widget_objects.items():
+            # this RegEx catches all objects with id like "functionNumberButton"
+            if re.match("^function.*Button$", widget_id):
+                yield widget_id, widget
+        
+    def __create_function_windows(self):
+
+        widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['FUNCTION_BLANK'])
+        filepath = global_vars['GUI']['FUNCTION_BLANK'] 
+
+        # TODO: find better solution to RuntimeError: dict changed size during iteration
+        fnc_buttons = list(self.__function_buttons())
+
+        for name, widget in fnc_buttons:
+            yield name, FunctionWindow(name, self, self.db, widget_ids, filepath)
+
+    def show_function_window(self, button_name, button):
+        # TODO: remove button parameter
+        self.function_windows[button_name].show()
+
+    # endregion Function Windows
 
     def view_edit_db_window(self):
         self.setDisabled(True)
@@ -261,3 +288,14 @@ class DeleteWindow(DynamicPopupWindow):
         self._event_listener_manager = DeleteWindowListener(self, self.db)
 
 #endregion CRUD Buttons
+
+
+# region Function Buttons
+
+class FunctionWindow(PopupWindow):
+    def __init__(self, window_title, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.setWindowTitle(window_title)
+
+# endregion Function Buttons

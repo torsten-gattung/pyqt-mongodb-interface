@@ -13,7 +13,9 @@
         "CREATE": "ui/create_item_gui.ui",
         "MODIFY": "ui/modify_item_gui.ui",
         "FILTER": "ui/filter_item_gui.ui",
-        "DELETE": "ui/delete_item_gui.ui"
+        "DELETE": "ui/delete_item_gui.ui",
+
+        "FUNCTION_BLANK": "ui/function_button_blank_gui.ui"
 
     },
 
@@ -26,7 +28,9 @@
         "CREATE": "widget_ids/CREATE_WIDGET_ID.json",
         "MODIFY": "widget_ids/MODIFY_WIDGET_ID.json",
         "FILTER": "widget_ids/FILTER_WIDGET_ID.json",
-        "DELETE": "widget_ids/DELETE_WIDGET_ID.json"
+        "DELETE": "widget_ids/DELETE_WIDGET_ID.json",
+
+        "FUNCTION_BLANK": "widget_ids/FUNCTION_BLANK_WIDGET_ID.json"
 
     }
 }
