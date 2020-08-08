@@ -1,6 +1,5 @@
 {
     "QPushButton": [
-        "submitQueryButton",
 
         "editDatabaseButton",
         "editCollectionButton",
@@ -37,10 +36,6 @@
 
     "QTableWidget": [
         "mainTableWidget"
-    ],
-
-    "QTextEdit": [
-        "manualQueryTextEdit"
     ],
 
     "QLineEdit": [

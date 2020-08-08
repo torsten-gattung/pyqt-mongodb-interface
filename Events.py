@@ -25,24 +25,10 @@ class MainWindowListener(EventListenerManager):
 
     def __add_event_listeners(self):
         # Bind all database methods into frontend elements
-        self.__add_manual_query_listener()
         self.__add_crud_buttons_listeners()
         self.__add_function_buttons_listeners()
         self.__add_edit_db_and_collection_buttons_listeners()
 
-    def __add_manual_query_listener(self):
-        query_text_field = self.gui.widget_objects['manualQueryTextEdit']
-        submit_button = self.gui.widget_objects['submitQueryButton']
-
-        query_text = ""
-
-        def execute_manual_query(query_text=query_text):
-            query_text = query_text_field.toPlainText()
-            self.db.execute_manual_query(query_text)
-
-
-        submit_button.clicked.connect(execute_manual_query)
-    
     def __add_crud_buttons_listeners(self):
         create_button = self.gui.widget_objects['createButton']
         filter_button = self.gui.widget_objects['filterButton']

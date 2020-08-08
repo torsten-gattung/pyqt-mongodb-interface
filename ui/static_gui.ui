@@ -13,7 +13,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>760</height>
+    <height>659</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,13 +25,13 @@
   <property name="minimumSize">
    <size>
     <width>1024</width>
-    <height>760</height>
+    <height>659</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1024</width>
-    <height>760</height>
+    <height>659</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -72,7 +72,7 @@ QGroupBox {
       <x>10</x>
       <y>10</y>
       <width>1000</width>
-      <height>731</height>
+      <height>631</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -99,7 +99,7 @@ QGroupBox {
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="tabBarAutoHide">
      <bool>false</bool>
@@ -111,64 +111,13 @@ QGroupBox {
      <attribute name="title">
       <string>Main</string>
      </attribute>
-     <widget class="QLabel" name="manualQueryLabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>101</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Consolas</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Manual Query</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="manualQueryTextEdit">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>691</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Consolas</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: white;
-</string>
-      </property>
-      <property name="inputMethodHints">
-       <set>Qt::ImhNone</set>
-      </property>
-      <property name="placeholderText">
-       <string>&gt;</string>
-      </property>
-     </widget>
      <widget class="QTableWidget" name="mainTableWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>110</y>
+        <y>40</y>
         <width>691</width>
-        <height>571</height>
+        <height>551</height>
        </rect>
       </property>
       <property name="font">
@@ -202,7 +151,7 @@ QGroupBox {
       <property name="geometry">
        <rect>
         <x>720</x>
-        <y>100</y>
+        <y>10</y>
         <width>261</width>
         <height>81</height>
        </rect>
@@ -270,7 +219,7 @@ Collection</string>
       <property name="geometry">
        <rect>
         <x>720</x>
-        <y>190</y>
+        <y>100</y>
         <width>261</width>
         <height>131</height>
        </rect>
@@ -396,7 +345,7 @@ QPushButton#deleteButton:pressed {
       <property name="geometry">
        <rect>
         <x>720</x>
-        <y>330</y>
+        <y>240</y>
         <width>261</width>
         <height>351</height>
        </rect>
@@ -712,7 +661,7 @@ QPushButton#deleteButton:pressed {
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>90</y>
+        <y>20</y>
         <width>691</width>
         <height>16</height>
        </rect>
@@ -725,31 +674,6 @@ QPushButton#deleteButton:pressed {
       </property>
       <property name="text">
        <string>Loaded USERS collection from MAIN_DB database</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="submitQueryButton">
-      <property name="geometry">
-       <rect>
-        <x>730</x>
-        <y>50</y>
-        <width>101</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="text">
-       <string>Submit Query</string>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -1077,8 +1001,8 @@ QPushButton#deleteButton:pressed {
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>961</width>
-        <height>671</height>
+        <width>971</width>
+        <height>591</height>
        </rect>
       </property>
       <property name="html">
@@ -1250,7 +1174,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>-20</x>
-      <y>740</y>
+      <y>640</y>
       <width>1081</width>
       <height>21</height>
      </rect>
@@ -1348,7 +1272,7 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <tabstops>
-  <tabstop>submitQueryButton</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>editDatabaseButton</tabstop>
   <tabstop>editCollectionButton</tabstop>
   <tabstop>createButton</tabstop>
@@ -1367,13 +1291,13 @@ p, li { white-space: pre-wrap; }
   <tabstop>functionElevenButton</tabstop>
   <tabstop>functionSixButton</tabstop>
   <tabstop>functionTwelveButton</tabstop>
+  <tabstop>hostnameFieldLineEdit</tabstop>
+  <tabstop>portFieldLineEdit</tabstop>
   <tabstop>connectButton</tabstop>
   <tabstop>availableDatabaseComboBox</tabstop>
   <tabstop>availableCollectionComboBox</tabstop>
-  <tabstop>helpTextBrowser</tabstop>
-  <tabstop>manualQueryTextEdit</tabstop>
   <tabstop>mainTableWidget</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>helpTextBrowser</tabstop>
  </tabstops>
  <resources/>
  <connections/>

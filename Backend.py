@@ -1,6 +1,8 @@
+import sys
+import subprocess
+
 from pymongo import MongoClient
 import toolbox as util
-import sys
 
 
 global_vars: dict = util.json_to_dict("GLOBAL_VARIABLES.json")
@@ -36,11 +38,6 @@ class MongoHandler:
         if collection_name in self.current_collection_names:
             print("Yup")
 
-    def execute_manual_query(self, manual_query: str):
-        try:
-            exec("print(" + manual_query + ")")
-        except Exception as e:
-            print(e)
 
     # region CRUD queries
     def create_query(self, query_data):
