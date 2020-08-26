@@ -1,7 +1,7 @@
 {
     "SERVER": {
         "HOSTNAME": "localhost",
-        "PORT": "27017"
+        "PORT": 27017
     },
 
     "GUI": {

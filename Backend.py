@@ -11,13 +11,25 @@ import toolbox as util
 
 global_vars: dict = util.json_to_dict("GLOBAL_VARIABLES.json")
 
+default_host = global_vars["SERVER"]["HOSTNAME"]
+default_port = global_vars["SERVER"]["PORT"]
 
 class MongoHandler:
-    def __init__(self):
-        self._client = MongoClient(global_vars["SERVER"]["HOSTNAME"])
+
+    def __init__(self, host=default_host, port=default_port):
+        self.host = host
+        self.port = port
+
+    def connect(self, host=None, port=None):
+        if host is not None and port is not None:
+            self._client = MongoClient(host, port)
+            self.host, self.port = host, port
+        
+        else:
+            self._client = MongoClient(self.host, self.port)
 
         self.db_list = self.get_db_objects()
-
+        
     def get_db_objects(self):
 
         db_dict = {}

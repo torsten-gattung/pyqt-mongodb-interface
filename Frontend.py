@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import *
 import sys
 import toolbox as util
 from Events import *
-from Backend import *
 
 
 global_vars = util.json_to_dict("GLOBAL_VARIABLES.json")
@@ -12,12 +11,14 @@ global_vars = util.json_to_dict("GLOBAL_VARIABLES.json")
 # region Base Classes
 
 class Gui(QMainWindow):
-    
+
     # Stores all loaded widgets for easy access throughout program
     widget_objects = {}
 
-    def __init__(self, widget_ids: dict, gui_file_path: str):
+    def __init__(self, db, widget_ids: dict, gui_file_path: str):
         super().__init__()
+
+        self.db = db
         uic.loadUi(gui_file_path, self)
 
         self.gui_file_path = gui_file_path
@@ -31,49 +32,47 @@ class Gui(QMainWindow):
         print("\nLoading all GUI elements...")
         for object_type, id_list in self.widget_ids.items():
             for object_id in id_list:
-                exec("self.widget_objects[object_id] = self.findChild(" + object_type + ", object_id)")
+                exec(
+                    "self.widget_objects[object_id] = self.findChild(" + object_type + ", object_id)")
 
         print("Successfully loaded all GUI elements")
 
 
 class MainWindow(Gui):
-    
+
     # Stores assigned function buttons
     active_function_buttons: [str]
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs) 
+        super().__init__(*args, **kwargs)
 
+        self.event_listener = MainWindowListener(self, self.db)
+
+        self._create_sub_windows()
+
+        self.status_bar = self._get_status_bar()
+
+        self.function_windows = dict(self._create_function_windows())
+
+        self.set_status_bar_text()
+
+        # Show at the end because it makes me feel better
         self.show()
 
-        self.db = MongoHandler()
-        self.event_listener_manager = MainWindowListener(self, self.db)
-
-        self._welcome_window = self._create_welcome_window()
-        self._show_welcome_window()
+    def _create_sub_windows(self):
 
         self._edit_database_window = self._create_edit_db_window()
         self._edit_collection_window = self._create_edit_collection_window()
 
-        self._create_window = self._create_create_window()
-        self._modify_window = self._create_modify_window()
-        self._filter_window = self._create_filter_window()
-        self._delete_window = self._create_delete_window()
+        self._create_window = self._make_create_window()
+        self._modify_window = self._make_modify_window()
+        self._filter_window = self._make_filter_window()
+        self._delete_window = self._make_delete_window()
 
-        self.function_windows = dict(self._create_function_windows())
-
-    def _create_welcome_window(self):
-        _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['WELCOME'])
-        _gui_file_path = global_vars['GUI']['WELCOME']
-
-        return WelcomeWindow(self, self.db, _widget_ids, _gui_file_path)
-
-    def _show_welcome_window(self):
-        self.setDisabled(True)
-        self._welcome_window.show()
+    # region subwindows
 
     def _create_edit_db_window(self):
-        
+
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_DB'])
         _gui_file_path = global_vars['GUI']['EDIT_DB']
 
@@ -87,7 +86,7 @@ class MainWindow(Gui):
 
     # region CRUD windows
 
-    def _create_create_window(self):
+    def _make_create_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["CREATE"])
         _gui_file_path = global_vars['GUI']["CREATE"]
 
@@ -95,7 +94,7 @@ class MainWindow(Gui):
 
         return CreateWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def _create_modify_window(self):
+    def _make_modify_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["MODIFY"])
         _gui_file_path = global_vars['GUI']["MODIFY"]
 
@@ -103,7 +102,7 @@ class MainWindow(Gui):
 
         return ModifyWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def _create_filter_window(self):
+    def _make_filter_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["FILTER"])
         _gui_file_path = global_vars['GUI']["FILTER"]
 
@@ -111,13 +110,13 @@ class MainWindow(Gui):
 
         return FilterWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def _create_delete_window(self):
+    def _make_delete_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["DELETE"])
         _gui_file_path = global_vars['GUI']["DELETE"]
 
         _fields = ["field{}".format(num) for num in range(25)]
 
-        return DeleteWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)                    
+        return DeleteWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
     def show_create_window(self):
         self.setDisabled(True)
@@ -137,18 +136,19 @@ class MainWindow(Gui):
 
     # endregion CRUD windows
 
-    # region Fuction Windows
+    # region Fuction Buttons
 
     def _function_buttons(self):
         for widget_id, widget in self.widget_objects.items():
             # this RegEx catches all objects with id like "functionNumberButton"
             if re.match("^function.*Button$", widget_id):
                 yield widget_id, widget
-        
+
     def _create_function_windows(self):
 
-        widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['FUNCTION_BLANK'])
-        filepath = global_vars['GUI']['FUNCTION_BLANK'] 
+        widget_ids = util.json_to_dict(
+            global_vars['WIDGET_ID']['FUNCTION_BLANK'])
+        filepath = global_vars['GUI']['FUNCTION_BLANK']
 
         # TODO: find better solution to RuntimeError: dict changed size during iteration
         fnc_buttons = list(self._function_buttons())
@@ -160,27 +160,33 @@ class MainWindow(Gui):
         # TODO: remove button parameter
         self.function_windows[button_name].show()
 
-    # endregion Function Windows
+    # endregion Function Buttons
 
-    def view_edit_db_window(self):
+    def _get_status_bar(self):
+        return self.widget_objects['statusBarConnectionLabel']
+
+    def show_edit_db_window(self):
         self.setDisabled(True)
         self._edit_database_window.show()
 
-    def view_edit_collection_window(self):
+    def show_edit_collection_window(self):
         self.setDisabled(True)
         self._edit_collection_window.show()
 
-    def add_function_button_listener(self, button: QPushButton, button_name: str):
-        pass
+    # endregion subwindows
+
+    def set_status_bar_text(self):
+        text = f"Connected to Mongo Server on //{self.db.host}:{self.db.port}. Nice!"
+
+        self.widget_objects['statusBarCurrentStatusLabel'].setText("Connected")
+        self.status_bar.setText(text)
 
 
 class PopupWindow(Gui):
-    def __init__(self, parent_gui, db, *args, **kwargs):
+    def __init__(self, parent_gui, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parent_gui = parent_gui
-        self.db = db
 
-    
     def closeEvent(self, a0):
         self.parent_gui.setDisabled(False)  # return 'focus' to parent
         self.hide()
@@ -212,8 +218,10 @@ class DynamicPopupWindow(PopupWindow):
 
     @staticmethod
     def _add_to_layout(layout_, labels, field_widgets):
-        [layout_.addWidget(label, index, 0) for index, label in enumerate(labels)]
-        [layout_.addWidget(widget, index, 1) for index, widget in enumerate(field_widgets)]
+        [layout_.addWidget(label, index, 0)
+         for index, label in enumerate(labels)]
+        [layout_.addWidget(widget, index, 1)
+         for index, widget in enumerate(field_widgets)]
 
     def __add_fields(self):
 
@@ -231,12 +239,24 @@ class DynamicPopupWindow(PopupWindow):
 # endregion Base Classes
 
 
-class WelcomeWindow(PopupWindow):
+class WelcomeWindow(Gui):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = WelcomeWindowListener(self, self.db)
+        self.event_listener_handler = WelcomeWindowListener(self, self.db)
 
+    def set_main_window_method(self, method):
+        self.make_main_window = method
+
+    def create_main_window(self):
+        self.make_main_window(self.db)
+
+    def start_program(self):
+
+        self.create_main_window()
+
+        self.close()
+        del self
 
 # region Edit DB / Collection Buttons
 
@@ -252,7 +272,8 @@ class EditCollectionWindow(PopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = EditCollectionWindowListener(self, self.db)
+        self.event_listener_manager = EditCollectionWindowListener(
+            self, self.db)
 
 
 # endregion Edit DB / Collcetion Buttons
@@ -287,7 +308,7 @@ class DeleteWindow(DynamicPopupWindow):
 
         self._event_listener_manager = DeleteWindowListener(self, self.db)
 
-#endregion CRUD Buttons
+# endregion CRUD Buttons
 
 
 # region Function Buttons
