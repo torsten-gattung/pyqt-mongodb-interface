@@ -13,7 +13,7 @@ class MongoHandler:
     def __init__(self):
         self._client = MongoClient(global_vars["SERVER"]["HOSTNAME"])
 
-        self.available_db_names: [] = self.__get_available_db_names()
+        self.available_db_names: [] = self._get_available_db_names()
 
         self.current_chosen_database: str = "subscribe2pewdiepie"
         self.current_chosen_collection: str = "like_and_subscribe"
@@ -21,7 +21,7 @@ class MongoHandler:
         self.current_collection_names: [str] = ["test_clction_name{}".format(num) for num in range(10)]
         self.current_collection_columns: [str] = ["test_field{}".format(num) for num in range(10)]
 
-    def __get_available_db_names(self):
+    def _get_available_db_names(self):
         return self._client.list_database_names()
 
     def select_database(self, database_name: str):

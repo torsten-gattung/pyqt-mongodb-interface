@@ -25,9 +25,9 @@ class Gui(QMainWindow):
         # holds all widget ids as strings: { QWidgetType: [id1, id2, ..] }
         self.widget_ids: dict = widget_ids
 
-        self.__load_all_qt_objects()
+        self._load_all_qt_objects()
 
-    def __load_all_qt_objects(self):
+    def _load_all_qt_objects(self):
         print("\nLoading all GUI elements...")
         for object_type, id_list in self.widget_ids.items():
             for object_id in id_list:
@@ -49,37 +49,37 @@ class MainWindow(Gui):
         self.db = MongoHandler()
         self.event_listener_manager = MainWindowListener(self, self.db)
 
-        self._welcome_window = self.__create_welcome_window()
-        self.__show_welcome_window()
+        self._welcome_window = self._create_welcome_window()
+        self._show_welcome_window()
 
-        self._edit_database_window = self.__create_edit_db_window()
-        self._edit_collection_window = self.__create_edit_collection_window()
+        self._edit_database_window = self._create_edit_db_window()
+        self._edit_collection_window = self._create_edit_collection_window()
 
-        self._create_window = self.__create_create_window()
-        self._modify_window = self.__create_modify_window()
-        self._filter_window = self.__create_filter_window()
-        self._delete_window = self.__create_delete_window()
+        self._create_window = self._create_create_window()
+        self._modify_window = self._create_modify_window()
+        self._filter_window = self._create_filter_window()
+        self._delete_window = self._create_delete_window()
 
-        self.function_windows = dict(self.__create_function_windows())
+        self.function_windows = dict(self._create_function_windows())
 
-    def __create_welcome_window(self):
+    def _create_welcome_window(self):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['WELCOME'])
         _gui_file_path = global_vars['GUI']['WELCOME']
 
         return WelcomeWindow(self, self.db, _widget_ids, _gui_file_path)
 
-    def __show_welcome_window(self):
+    def _show_welcome_window(self):
         self.setDisabled(True)
         self._welcome_window.show()
 
-    def __create_edit_db_window(self):
+    def _create_edit_db_window(self):
         
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_DB'])
         _gui_file_path = global_vars['GUI']['EDIT_DB']
 
         return EditDatabaseWindow(self, self.db, _widget_ids, _gui_file_path)
 
-    def __create_edit_collection_window(self):
+    def _create_edit_collection_window(self):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_COL'])
         _gui_file_path = global_vars['GUI']['EDIT_COL']
 
@@ -87,7 +87,7 @@ class MainWindow(Gui):
 
     # region CRUD windows
 
-    def __create_create_window(self):
+    def _create_create_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["CREATE"])
         _gui_file_path = global_vars['GUI']["CREATE"]
 
@@ -95,7 +95,7 @@ class MainWindow(Gui):
 
         return CreateWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def __create_modify_window(self):
+    def _create_modify_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["MODIFY"])
         _gui_file_path = global_vars['GUI']["MODIFY"]
 
@@ -103,7 +103,7 @@ class MainWindow(Gui):
 
         return ModifyWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def __create_filter_window(self):
+    def _create_filter_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["FILTER"])
         _gui_file_path = global_vars['GUI']["FILTER"]
 
@@ -111,7 +111,7 @@ class MainWindow(Gui):
 
         return FilterWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
-    def __create_delete_window(self):
+    def _create_delete_window(self):
         _widget_id = util.json_to_dict(global_vars['WIDGET_ID']["DELETE"])
         _gui_file_path = global_vars['GUI']["DELETE"]
 
@@ -139,19 +139,19 @@ class MainWindow(Gui):
 
     # region Fuction Windows
 
-    def __function_buttons(self):
+    def _function_buttons(self):
         for widget_id, widget in self.widget_objects.items():
             # this RegEx catches all objects with id like "functionNumberButton"
             if re.match("^function.*Button$", widget_id):
                 yield widget_id, widget
         
-    def __create_function_windows(self):
+    def _create_function_windows(self):
 
         widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['FUNCTION_BLANK'])
         filepath = global_vars['GUI']['FUNCTION_BLANK'] 
 
         # TODO: find better solution to RuntimeError: dict changed size during iteration
-        fnc_buttons = list(self.__function_buttons())
+        fnc_buttons = list(self._function_buttons())
 
         for name, widget in fnc_buttons:
             yield name, FunctionWindow(name, self, self.db, widget_ids, filepath)
@@ -199,19 +199,19 @@ class DynamicPopupWindow(PopupWindow):
 
         self.event_listener_manager = DynamicPopupWindowListener(self, self.db)
 
-    def __create_qobjects(self):
+    def _create_qobjects(self):
         labels = [QLabel(col_name) for col_name in self.collection_columns]
         field_widgets = [QLineEdit() for _ in self.collection_columns]
 
         return labels, field_widgets
 
     @staticmethod
-    def __set_widgets_size(labels, field_widgets):
+    def _set_widgets_size(labels, field_widgets):
         [label.setFixedSize(125, 25) for label in labels]
         [widget.setFixedSize(225, 25) for widget in field_widgets]
 
     @staticmethod
-    def __add_to_layout(layout_, labels, field_widgets):
+    def _add_to_layout(layout_, labels, field_widgets):
         [layout_.addWidget(label, index, 0) for index, label in enumerate(labels)]
         [layout_.addWidget(widget, index, 1) for index, widget in enumerate(field_widgets)]
 
@@ -219,11 +219,11 @@ class DynamicPopupWindow(PopupWindow):
 
         layout_ = QGridLayout()
 
-        labels, field_widgets = self.__create_qobjects()
+        labels, field_widgets = self._create_qobjects()
 
-        self.__set_widgets_size(labels, field_widgets)
+        self._set_widgets_size(labels, field_widgets)
 
-        self.__add_to_layout(layout_, labels, field_widgets)
+        self._add_to_layout(layout_, labels, field_widgets)
 
         self.fields_widget.setLayout(layout_)
 

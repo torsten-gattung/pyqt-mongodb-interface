@@ -13,7 +13,7 @@ class EventListenerManager:
         self.gui = gui
         self.db = db
 
-    def __add_event_listeners(self):
+    def _add_event_listeners(self):
         raise UnimplementedMethodException("Method must be implemented in inheriting classes")
 
 
@@ -21,15 +21,15 @@ class MainWindowListener(EventListenerManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_event_listeners()
+        self._add_event_listeners()
 
-    def __add_event_listeners(self):
+    def _add_event_listeners(self):
         # Bind all database methods into frontend elements
-        self.__add_crud_buttons_listeners()
-        self.__add_function_buttons_listeners()
-        self.__add_edit_db_and_collection_buttons_listeners()
+        self._add_crud_buttons_listeners()
+        self._add_function_buttons_listeners()
+        self._add_edit_db_and_collection_buttons_listeners()
 
-    def __add_crud_buttons_listeners(self):
+    def _add_crud_buttons_listeners(self):
         create_button = self.gui.widget_objects['createButton']
         filter_button = self.gui.widget_objects['filterButton']
         modify_button = self.gui.widget_objects['modifyButton']
@@ -61,17 +61,17 @@ class MainWindowListener(EventListenerManager):
         modify_button.clicked.connect(self.gui.show_modify_window)
         delete_button.clicked.connect(self.gui.show_delete_window)
 
-    def __add_function_buttons_listeners(self):
+    def _add_function_buttons_listeners(self):
 
         for button_id, button  in self.gui.widget_objects.items():
             # this RegEx catches all objects with id ~= "functionNumberButton"
             if re.match("^function.*Button$", button_id):
-                self.__add_button_listener(button, button_id)
+                self._add_button_listener(button, button_id)
 
-    def __add_button_listener(self, button, button_name: str):
+    def _add_button_listener(self, button, button_name: str):
         button.clicked.connect(lambda: self.gui.show_function_window(button_name, button))
 
-    def __add_edit_db_and_collection_buttons_listeners(self):
+    def _add_edit_db_and_collection_buttons_listeners(self):
 
         edit_database_button = self.gui.widget_objects['editDatabaseButton']
         edit_collection_button = self.gui.widget_objects['editCollectionButton']
@@ -84,9 +84,9 @@ class DynamicPopupWindowListener(EventListenerManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_field_listeners()
+        self._add_field_listeners()
 
-    def __add_field_listeners(self):
+    def _add_field_listeners(self):
         for widget in self.gui.fields_widget.children():
             
             expected_type = type(QLineEdit())
@@ -102,24 +102,24 @@ class WelcomeWindowListener(EventListenerManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._host_field, self._port_field = self.__get_fields()
+        self._host_field, self._port_field = self._get_fields()
 
-        self.__add_event_listeners()
+        self._add_event_listeners()
 
 
-    def __get_fields(self):
+    def _get_fields(self):
         _host_field: QLineEdit = self.gui.widget_objects['hostLineEdit']
         _port_field: QLineEdit = self.gui.widget_objects['portLineEdit']
 
         return _host_field, _port_field
 
-    def __add_event_listeners(self):
-        self.__add_run_button_listener()
+    def _add_event_listeners(self):
+        self._add_run_button_listener()
 
-    def __add_run_button_listener(self):
-        self.gui.widget_objects['runButton'].clicked.connect(self.__run_button_on_click)
+    def _add_run_button_listener(self):
+        self.gui.widget_objects['runButton'].clicked.connect(self._run_button_on_click)
 
-    def __check_field_values(self):
+    def _check_field_values(self):
         
         self._host_field.setDisabled(True)
         self._port_field.setDisabled(True)
@@ -127,10 +127,10 @@ class WelcomeWindowListener(EventListenerManager):
         return True
 
 
-    def __run_button_on_click(self):
+    def _run_button_on_click(self):
 
         # Check fields
-        if not self.__check_field_values():
+        if not self._check_field_values():
             raise BadFieldValueException("Invalid value entered in host field")
 
         # Attempt Connection
@@ -150,20 +150,20 @@ class EditDatabaseWindowListener(EventListenerManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_event_listeners()
+        self._add_event_listeners()
 
-    def __add_event_listeners(self):
-        self.__add_buttons()
-        self.__add_line_edits()
-        self.__add_labels()
+    def _add_event_listeners(self):
+        self._add_buttons()
+        self._add_line_edits()
+        self._add_labels()
 
-    def __add_buttons(self):
+    def _add_buttons(self):
         pass
 
-    def __add_line_edits(self):
+    def _add_line_edits(self):
         pass
 
-    def __add_labels(self):
+    def _add_labels(self):
         pass
 
 
@@ -171,20 +171,20 @@ class EditCollectionWindowListener(EventListenerManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_event_listeners()
+        self._add_event_listeners()
 
-    def __add_event_listeners(self):
-        self.__add_buttons()
-        self.__add_line_edits()
-        self.__add_labels()
+    def _add_event_listeners(self):
+        self._add_buttons()
+        self._add_line_edits()
+        self._add_labels()
 
-    def __add_buttons(self):
+    def _add_buttons(self):
         pass
 
-    def __add_line_edits(self):
+    def _add_line_edits(self):
         pass
 
-    def __add_labels(self):
+    def _add_labels(self):
         pass
 
 
@@ -197,13 +197,13 @@ class CreateWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_button_listener()
+        self._add_button_listener()
 
-    def __add_button_listener(self):
+    def _add_button_listener(self):
         self.gui.widget_objects['createButton'].clicked.connect(lambda: print("Created Item (fake)"))
-        self.gui.widget_objects['createButton'].clicked.connect(self.__list_all_field_data)
+        self.gui.widget_objects['createButton'].clicked.connect(self._list_all_field_data)
 
-    def __list_all_field_data(self):
+    def _list_all_field_data(self):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
@@ -217,13 +217,13 @@ class FilterWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_button_listener()
+        self._add_button_listener()
 
-    def __add_button_listener(self):
+    def _add_button_listener(self):
         self.gui.widget_objects['filterButton'].clicked.connect(lambda: print("Filtered Item (fake)"))
-        self.gui.widget_objects['filterButton'].clicked.connect(self.__list_all_field_data)
+        self.gui.widget_objects['filterButton'].clicked.connect(self._list_all_field_data)
 
-    def __list_all_field_data(self):
+    def _list_all_field_data(self):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
@@ -237,13 +237,13 @@ class ModifyWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_button_listener()
+        self._add_button_listener()
 
-    def __add_button_listener(self):
+    def _add_button_listener(self):
         self.gui.widget_objects['updateButton'].clicked.connect(lambda: print("Updated Item (fake)"))
-        self.gui.widget_objects['updateButton'].clicked.connect(self.__list_all_field_data)
+        self.gui.widget_objects['updateButton'].clicked.connect(self._list_all_field_data)
 
-    def __list_all_field_data(self):
+    def _list_all_field_data(self):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
@@ -257,13 +257,13 @@ class DeleteWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.__add_button_listener()
+        self._add_button_listener()
 
-    def __add_button_listener(self):
+    def _add_button_listener(self):
         self.gui.widget_objects['deleteButton'].clicked.connect(lambda: print("Deleted Item (fake)"))
-        self.gui.widget_objects['deleteButton'].clicked.connect(self.__list_all_field_data)
+        self.gui.widget_objects['deleteButton'].clicked.connect(self._list_all_field_data)
 
-    def __list_all_field_data(self):
+    def _list_all_field_data(self):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
