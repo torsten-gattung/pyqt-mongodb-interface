@@ -49,10 +49,8 @@ class MainWindow(Gui):
         self.event_listener = MainWindowListener(self, self.db)
 
         self._create_sub_windows()
-
-        self.status_bar = self._get_status_bar()
-
         self.function_windows = dict(self._create_function_windows())
+        self.status_bar = self._get_status_bar()
 
         self.set_status_bar_text()
 
@@ -76,13 +74,13 @@ class MainWindow(Gui):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_DB'])
         _gui_file_path = global_vars['GUI']['EDIT_DB']
 
-        return EditDatabaseWindow(self, self.db, _widget_ids, _gui_file_path)
+        return DatabaseWindow(self, self.db, _widget_ids, _gui_file_path)
 
     def _create_edit_collection_window(self):
         _widget_ids = util.json_to_dict(global_vars['WIDGET_ID']['EDIT_COL'])
         _gui_file_path = global_vars['GUI']['EDIT_COL']
 
-        return EditCollectionWindow(self, self.db, _widget_ids, _gui_file_path)
+        return CollectionWindow(self, self.db, _widget_ids, _gui_file_path)
 
     # region CRUD windows
 
@@ -165,6 +163,9 @@ class MainWindow(Gui):
     def _get_status_bar(self):
         return self.widget_objects['statusBarConnectionLabel']
 
+    def _get_information_label(self):
+        return self.widget_objects['loadedFromLabel']
+
     def show_edit_db_window(self):
         self.setDisabled(True)
         self._edit_database_window.show()
@@ -173,13 +174,61 @@ class MainWindow(Gui):
         self.setDisabled(True)
         self._edit_collection_window.show()
 
+    def update_collection_list(self):
+        self._edit_collection_window.update_collection_list()
+
     # endregion subwindows
 
     def set_status_bar_text(self):
-        text = f"Connected to Mongo Server on //{self.db.host}:{self.db.port}. Nice!"
+        text = f"Connected to Mongo Server on //{self.db.host}:{self.db.port}"
 
         self.widget_objects['statusBarCurrentStatusLabel'].setText("Connected")
         self.status_bar.setText(text)
+
+    def _format_collection_name(self, col_name):
+        """
+        Formats something.col_name into col_name
+        """
+        name_ = col_name.split('.')
+
+        if len(name_) > 0:
+            return ".".join(name_[1:])
+
+        else:
+            return col_name
+
+    def update_information_labels(self):
+        self.information_label = self._get_information_label()
+
+        current_db = ""
+        current_collection = ""
+        text = ""
+
+        # If no DB selected yet
+        try:
+            current_db = self.db.current_db.name
+
+        except AttributeError as e:
+            text = "Select a database clicking the 'Database' button"
+            self.information_label.setText(text)
+
+            return
+
+        # If no collection selected yet
+        try:
+            current_collection = self.db.current_collection.name
+            
+            current_collection = self._format_collection_name(current_collection)
+
+        except AttributeError as e:
+            text = f"Selected {current_db} database. Choose a collection by clicking the 'Collection' button"
+            self.information_label.setText(text)
+
+            return
+
+        text = f"Loaded {current_collection} collection from {current_db} database"
+
+        self.information_label.setText(text)
 
 
 class PopupWindow(Gui):
@@ -261,23 +310,89 @@ class WelcomeWindow(Gui):
 # region Edit DB / Collection Buttons
 
 
-class EditDatabaseWindow(PopupWindow):
+class DatabaseWindow(PopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = EditDatabaseWindowListener(self, self.db)
+        self.event_listener_manager = DatabaseWindowListener(self, self.db)
+
+        self.db_list = self._get_database_list_widget()
+        self.populate_database_list()
+
+    def _get_database_list_widget(self):
+        return self.widget_objects['databaseList']
+
+    def update_collection_list(self):
+        self.parent_gui.update_collection_list()
+
+    def populate_database_list(self):
+        self.db_list.addItems(self.db.db_names)
+
+    def get_selected_database(self):
+        selected_db = ""
+
+        try:
+            selected_db = self.db_list.selectedItems()[0].text()
+
+            return selected_db
+        except IndexError as e:
+            # TODO: add popup warning here
+            print("Must Select a database first!")
+
+            return
+
+    def update_information_labels(self):
+
+        # TODO: update information labels for Database Window
+
+        self.parent_gui.update_information_labels()
 
 
-class EditCollectionWindow(PopupWindow):
+class CollectionWindow(PopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = EditCollectionWindowListener(
-            self, self.db)
+        self.event_listener_manager = CollectionWindowListener(self, self.db)
+
+        self.collection_list = self._get_collection_list_widget()
+
+    def _get_collection_list_widget(self):
+        return self.widget_objects['collectionList']
+
+    def clear_collection_list(self):
+        while len(self.collection_list) > 0:
+            self.collection_list.takeItem(0)
+
+    def update_collection_list(self):
+        self.clear_collection_list()
+        self.populate_collection_list()
+
+    def populate_collection_list(self):
+        names = self._get_collection_names()
+        self.collection_list.addItems(names)
+
+    def _get_collection_names(self):
+        selected_db = self.db.current_db
+
+        return selected_db.list_collection_names()
+
+    def get_selected_collection(self):
+        try:
+            selected_collection = self.collection_list.selectedItems()[0].text()
+            return selected_collection
+
+        except IndexError as e:
+            print("Must select a collection first!")
+            return
+
+    def update_information_labels(self):
+
+        # TODO: update information labels for Collection Window
+
+        self.parent_gui.update_information_labels()
 
 
 # endregion Edit DB / Collcetion Buttons
-
 
 # region CRUD Buttons
 

@@ -1,10 +1,13 @@
 import sys
 import subprocess
+import traceback
 
 from pymongo import MongoClient
 
 from pymongo.database import Database as MongoDatabase
 from pymongo.collection import Collection as MongoCollection
+
+from custom_exceptions import *
 
 import toolbox as util
 
@@ -19,6 +22,9 @@ class MongoHandler:
     def __init__(self, host=default_host, port=default_port):
         self.host = host
         self.port = port
+        
+        self.current_db = None
+        self.current_collection = None
 
     def connect(self, host=None, port=None):
         if host is not None and port is not None:
@@ -28,8 +34,12 @@ class MongoHandler:
         else:
             self._client = MongoClient(self.host, self.port)
 
-        self.db_list = self.get_db_objects()
-        
+        self.continue_init()
+
+    def continue_init(self):
+        self.db_dict = self.get_db_objects()
+        self.db_names = self.db_dict.keys()
+
     def get_db_objects(self):
 
         db_dict = {}
@@ -39,6 +49,26 @@ class MongoHandler:
             db_dict[name] = db
 
         return db_dict
+
+    def switch_db(self, db_name):
+
+        if db_name in self.db_names:
+            self.current_db = self.db_dict[db_name]
+            self.current_collection = None
+            print(f"Switched to '{self.current_db.name}' database")
+
+        else:
+            raise ClientAndServerOutOfSyncException("Database list and mongo server are out of sync!")
+            traceback.print_exc()
+
+    def switch_collection(self, collection_name):
+        if collection_name in self.current_db.list_collection_names():
+            self.current_collection = self.current_db.collection_dict[collection_name]
+            print(f"Switched to collection '{collection_name}'")
+
+        else:
+            raise ClientAndServerOutOfSyncException("Collection list and mongo server are out of sync!")
+            traceback.print_exc()
 
 
 class Database(MongoDatabase):
@@ -65,6 +95,6 @@ class Collection(MongoCollection):
 if __name__ == "__main__":
     handler = MongoHandler()
 
-    test_db = handler.db_list['test'].collections['test_db']
+    test_db = handler.db_dict['test'].collections['test_db']
 
     print(test_db.count_documents({}))

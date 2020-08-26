@@ -175,11 +175,16 @@ class WelcomeWindowListener(EventListener):
 
 # region Edit DB / Collection Window Listeners
 
-class EditDatabaseWindowListener(EventListener):
+class DatabaseWindowListener(EventListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.select_button = self._get_select_button()
+
         self._add_event_listeners()
+
+    def _get_select_button(self):
+        return self.gui.widget_objects['selectButton']
 
     def _add_event_listeners(self):
         self._add_buttons()
@@ -187,7 +192,19 @@ class EditDatabaseWindowListener(EventListener):
         self._add_labels()
 
     def _add_buttons(self):
-        pass
+        self.select_button.clicked.connect(self.select_button_onclick)
+
+    def select_button_onclick(self):
+
+        selected_db = self.gui.get_selected_database()
+
+        if selected_db is not None:
+            self.db.switch_db(selected_db)
+            self.gui.update_collection_list()
+            self.gui.update_information_labels()
+
+            self.gui.close()
+
 
     def _add_line_edits(self):
         pass
@@ -196,11 +213,16 @@ class EditDatabaseWindowListener(EventListener):
         pass
 
 
-class EditCollectionWindowListener(EventListener):
+class CollectionWindowListener(EventListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.select_button = self._get_select_button()
+
         self._add_event_listeners()
+
+    def _get_select_button(self):
+        return self.gui.widget_objects['selectButton']
 
     def _add_event_listeners(self):
         self._add_buttons()
@@ -208,7 +230,17 @@ class EditCollectionWindowListener(EventListener):
         self._add_labels()
 
     def _add_buttons(self):
-        pass
+        self.select_button.clicked.connect(self.select_button_onclick)
+
+    def select_button_onclick(self):
+        selected_collection = self.gui.get_selected_collection()
+
+        if selected_collection is not None:
+            self.db.switch_collection(selected_collection)
+
+            self.gui.update_information_labels()
+
+            self.gui.close()
 
     def _add_line_edits(self):
         pass

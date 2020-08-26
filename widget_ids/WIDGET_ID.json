@@ -26,6 +26,8 @@
     ],
 
     "QLabel": [
+        "loadedFromLabel",
+
         "statusBarCurrentStatusLabel",
         "statusBarConnectionLabel",
 

@@ -12,3 +12,8 @@ class UnimplementedMethodException(GeneralException):
 class BadFieldValueException(Exception):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class ClientAndServerOutOfSyncException(RuntimeError):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
