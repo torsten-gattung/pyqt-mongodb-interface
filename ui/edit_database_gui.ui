@@ -74,7 +74,7 @@ QGroupBox {
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>151</width>
+        <width>461</width>
         <height>16</height>
        </rect>
       </property>
@@ -85,9 +85,9 @@ QGroupBox {
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>231</width>
+        <x>40</x>
+        <y>50</y>
+        <width>321</width>
         <height>16</height>
        </rect>
       </property>
@@ -99,7 +99,7 @@ QGroupBox {
       <property name="geometry">
        <rect>
         <x>270</x>
-        <y>60</y>
+        <y>80</y>
         <width>211</width>
         <height>251</height>
        </rect>
@@ -333,7 +333,7 @@ QGroupBox {
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>381</width>
+        <width>691</width>
         <height>16</height>
        </rect>
       </property>
@@ -345,7 +345,7 @@ QGroupBox {
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>50</y>
+        <y>40</y>
         <width>71</width>
         <height>21</height>
        </rect>
@@ -358,7 +358,7 @@ QGroupBox {
       <property name="geometry">
        <rect>
         <x>80</x>
-        <y>50</y>
+        <y>70</y>
         <width>256</width>
         <height>192</height>
        </rect>
@@ -366,6 +366,7 @@ QGroupBox {
       <property name="font">
        <font>
         <family>Consolas</family>
+        <pointsize>9</pointsize>
        </font>
       </property>
       <item>
@@ -474,11 +475,16 @@ QGroupBox {
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>10</x>
         <y>130</y>
-        <width>561</width>
-        <height>16</height>
+        <width>721</width>
+        <height>20</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>Warning! This will permanently delete this database and all its collections. Make sure you absolutely want to do this.</string>
