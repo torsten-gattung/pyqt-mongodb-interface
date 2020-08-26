@@ -207,7 +207,7 @@ class CreateWindowListener(DynamicPopupWindowListener):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
-                print(field.text(), end="")
+                print(widget.text(), end="")
 
             if type(widget) == type(QLineEdit()):
                 print(widget.text())
@@ -227,7 +227,7 @@ class FilterWindowListener(DynamicPopupWindowListener):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
-                print(field.text(), end="")
+                print(widget.text(), end="")
 
             if type(widget) == type(QLineEdit()):
                 print(widget.text())
@@ -247,7 +247,7 @@ class ModifyWindowListener(DynamicPopupWindowListener):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
-                print(field.text(), end="")
+                print(widget.text(), end="")
 
             if type(widget) == type(QLineEdit()):
                 print(widget.text())
@@ -267,7 +267,7 @@ class DeleteWindowListener(DynamicPopupWindowListener):
         for widget in self.gui.fields_widget.children():
 
             if type(widget) == type(QLabel):
-                print(field.text(), end="")
+                print(widget.text(), end="")
 
             if type(widget) == type(QLineEdit()):
                 print(widget.text())
