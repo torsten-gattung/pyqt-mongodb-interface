@@ -77,6 +77,13 @@ class MongoHandler:
         else:
             return self.current_collection.get_field_template()
 
+    def get_current_db_doc_count(self):
+        count_ = 0
+
+        for collection in self.current_db.collection_dict.values():
+            count_ += collection.count_documents({})
+
+        return count_
 
 class Database(MongoDatabase):
     def __init__(self, *args, **kwargs):

@@ -12,11 +12,11 @@ global_vars = util.json_to_dict("GLOBAL_VARIABLES.json")
 
 class Gui(QMainWindow):
 
-    # Stores all loaded widgets for easy access throughout program
-    widget_objects = {}
-
     def __init__(self, db, widget_ids: dict, gui_file_path: str):
         super().__init__()
+        
+        # Stores all loaded widgets for easy access
+        self.widget_objects = {}
 
         self.db = db
         uic.loadUi(gui_file_path, self)
@@ -50,6 +50,7 @@ class MainWindow(Gui):
         self.status_bar = self._get_status_bar()
 
         self.set_status_bar_text()
+        self.update_information_labels()
 
         # Show at the end because it makes me feel better
         self.show()
@@ -182,7 +183,7 @@ class MainWindow(Gui):
         """
         name_ = col_name.split('.')
 
-        if len(name_) > 0:
+        if len(name_) > 1:
             return ".".join(name_[1:])
 
         else:
@@ -390,12 +391,26 @@ class DatabaseWindow(PopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = DatabaseWindowListener(self, self.db)
+        self.event_listener = DatabaseWindowListener(self, self.db)
 
-        self.db_list = self._get_database_list_widget()
+        self.db_list = self._get_database_list()
         self.populate_database_list()
 
-    def _get_database_list_widget(self):
+        self.current_db_label = None
+        self.local_col_count_label = None
+        self.local_doc_count_label = None
+        self.database_count_label = None
+
+        self._assign_information_labels()
+        self.update_information_labels(with_default=True)
+
+    def _assign_information_labels(self):
+        self.current_db_label = self.widget_objects['currentDatabaseLabel']
+        self.local_col_count_label = self.widget_objects['collectionCountLabel']
+        self.local_doc_count_label = self.widget_objects['localDocumentCountLabel']
+        self.database_count_label = self.widget_objects['databaseCountLabel']
+
+    def _get_database_list(self):
         return self.widget_objects['databaseList']
 
     def update_collection_list(self):
@@ -417,20 +432,74 @@ class DatabaseWindow(PopupWindow):
 
             return
 
-    def update_information_labels(self):
+    def _update_current_database_label(self, with_default):
+        if with_default:
+            self.current_db_label.setText("N/A")
+
+        else:
+            self.current_db_label.setText(self.db.current_db.name)
+
+    def _update_local_collection_count(self, with_default):
+        if with_default:
+            self.local_col_count_label.setText("N/A")
+
+        else:
+            count_ = len(self.db.current_db.list_collection_names())
+            count_ = str(count_)
+            self.local_col_count_label.setText(count_)
+    
+    def _update_local_doc_count(self, with_default):
+        if with_default:
+            self.local_doc_count_label.setText("N/A")
+
+        else:
+            count_ = str(self.db.get_current_db_doc_count())
+            self.local_doc_count_label.setText(count_)
+
+    def _update_local_db_count(self, with_default):
+        if with_default:
+            self.database_count_label.setText("N/A")
+
+        else:
+            count_ = len(self.db.db_dict.keys())
+            count_ = str(count_)
+            self.database_count_label.setText(count_)
+
+    def update_information_labels(self, with_default=False):
 
         # TODO: update information labels for Database Window
 
-        self.parent_gui.update_information_labels()
+        self._update_current_database_label(with_default)
+        self._update_local_collection_count(with_default)
+        self._update_local_doc_count(with_default)
+        self._update_local_db_count(with_default)
+
+        if not with_default:
+            self.parent_gui.update_information_labels()
 
 
 class CollectionWindow(PopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.event_listener_manager = CollectionWindowListener(self, self.db)
+        self.event_listener = CollectionWindowListener(self, self.db)
 
         self.collection_list = self._get_collection_list_widget()
+
+        self.current_col_label = None
+        self.current_db_label = None
+        self.doc_count_label = None
+        self.avg_doc_size_label = None
+        self.col_size = None
+
+        self.assign_information_labels()
+        self.update_information_labels(with_default=True)
+
+    def assign_information_labels(self):
+        self.current_col_label = self.widget_objects['currentCollectionLabel']
+        self.current_db_label = self.widget_objects['currentDatabaseLabel']
+        self.db_count_label = self.widget_objects['databaseCountLabel']
+        self.doc_count_label = self.widget_objects['documentCountLabel']
 
     def _get_collection_list_widget(self):
         return self.widget_objects['collectionList']
@@ -461,11 +530,48 @@ class CollectionWindow(PopupWindow):
             print("Must select a collection first!")
             return
 
-    def update_information_labels(self):
+    def _update_current_col_label(self, with_default):
+        if with_default:
+            self.current_col_label.setText("N/A")
 
-        # TODO: update information labels for Collection Window
+        else:
+            self.current_col_label.setText(self.db.current_collection.name)
 
-        self.parent_gui.update_information_labels()
+    def _update_current_db_label(self, with_default):
+        if with_default:
+            self.current_db_label.setText("N/A")
+
+        else:
+            self.current_db_label.setText(self.db.current_db.name)
+
+    def _update_db_count_label(self, with_default):
+        if with_default:
+            self.db_count_label.setText("N/A")
+
+        else:
+            count_ = len(self.db.db_dict.keys())
+            count_ = str(count_)
+            self.db_count_label.setText(count_)
+
+    def _update_doc_count_label(self, with_default):
+        if with_default:
+            self.doc_count_label.setText("N/A")
+
+        else:
+            count_ = self.db.current_collection.count_documents({})
+            count_ = str(count_)
+
+            self.doc_count_label.setText(count_)
+
+    def update_information_labels(self, with_default=False):
+
+        self._update_current_col_label(with_default)
+        self._update_current_db_label(with_default)
+        self._update_db_count_label(with_default)
+        self._update_doc_count_label(with_default)
+
+        if not with_default:
+            self.parent_gui.update_information_labels()
 
     def show(self):
         if self.db.current_db is None:

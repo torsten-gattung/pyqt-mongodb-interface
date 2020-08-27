@@ -15,7 +15,6 @@
     ],
 
     "QLabel": [
-        "averageDocumentSizeLabel",
         "currentCollectionLabel",
         "currentDatabaseLabel",
         "databaseCountLabel",
