@@ -29,13 +29,10 @@ class Gui(QMainWindow):
         self._load_all_qt_objects()
 
     def _load_all_qt_objects(self):
-        print("\nLoading all GUI elements...")
         for object_type, id_list in self.widget_ids.items():
             for object_id in id_list:
                 exec(
                     "self.widget_objects[object_id] = self.findChild(" + object_type + ", object_id)")
-
-        print("Successfully loaded all GUI elements")
 
 
 class MainWindow(Gui):
@@ -117,19 +114,15 @@ class MainWindow(Gui):
         return DeleteWindow(False, _fields, self, self.db, _widget_id, _gui_file_path)
 
     def show_create_window(self):
-        self.setDisabled(True)
         self._create_window.show()
 
     def show_modify_window(self):
-        self.setDisabled(True)
         self._modify_window.show()
 
     def show_filter_window(self):
-        self.setDisabled(True)
         self._filter_window.show()
 
     def show_delete_window(self):
-        self.setDisabled(True)
         self._delete_window.show()
 
     # endregion CRUD windows
@@ -167,11 +160,9 @@ class MainWindow(Gui):
         return self.widget_objects['loadedFromLabel']
 
     def show_edit_db_window(self):
-        self.setDisabled(True)
         self._edit_database_window.show()
 
     def show_edit_collection_window(self):
-        self.setDisabled(True)
         self._edit_collection_window.show()
 
     def update_collection_list(self):
@@ -217,8 +208,9 @@ class MainWindow(Gui):
         # If no collection selected yet
         try:
             current_collection = self.db.current_collection.name
-            
-            current_collection = self._format_collection_name(current_collection)
+
+            current_collection = self._format_collection_name(
+                current_collection)
 
         except AttributeError as e:
             text = f"Selected {current_db} database. Choose a collection by clicking the 'Collection' button"
@@ -236,6 +228,10 @@ class PopupWindow(Gui):
         super().__init__(*args, **kwargs)
         self.parent_gui = parent_gui
 
+    def show(self):
+        self.parent_gui.setDisabled(True)
+        return super().show()
+
     def closeEvent(self, a0):
         self.parent_gui.setDisabled(False)  # return 'focus' to parent
         self.hide()
@@ -245,45 +241,125 @@ class PopupWindow(Gui):
 class DynamicPopupWindow(PopupWindow):
     def __init__(self, disable_field_edit=False, fields=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.first_time = True
 
-        # self.collection_columns: [str] = self.db.current_collection_columns
-        self.collection_columns = fields
+        self.label_values = []
+        self.field_values = []
 
-        self.fields_widget: QWidget = self.widget_objects['fieldsWidget']
-        self.__add_fields()
+        self.labels = {}
+        self.fields = {}
+
+        self.fields_container = self.get_fields_container()
 
         self.event_listener_manager = DynamicPopupWindowListener(self, self.db)
 
-    def _create_qobjects(self):
-        labels = [QLabel(col_name) for col_name in self.collection_columns]
-        field_widgets = [QLineEdit() for _ in self.collection_columns]
+    def get_fields_container(self):
+        return self.widget_objects['fieldsWidget']
 
-        return labels, field_widgets
+    def _make_widgets(self):
+        label_widgets = [QLabel(col_name) for col_name in self.label_values]
+        field_widgets = [QLineEdit() for _ in self.label_values]
 
-    @staticmethod
-    def _set_widgets_size(labels, field_widgets):
-        [label.setFixedSize(125, 25) for label in labels]
-        [widget.setFixedSize(225, 25) for widget in field_widgets]
+        labels = {str(widget_text): widget for widget_text, widget in zip(self.label_values, label_widgets)}
+        fields = {str(widget_text): widget for widget_text, widget in zip(self.label_values, field_widgets)}
 
-    @staticmethod
-    def _add_to_layout(layout_, labels, field_widgets):
-        [layout_.addWidget(label, index, 0)
-         for index, label in enumerate(labels)]
-        [layout_.addWidget(widget, index, 1)
-         for index, widget in enumerate(field_widgets)]
+        return labels, fields
 
-    def __add_fields(self):
+    def _set_widgets_size(self):
+        [label.setFixedSize(125, 25) for label in self.labels.values()]
+        [field.setFixedSize(225, 25) for field in self.fields.values()]
 
-        layout_ = QGridLayout()
+    def _set_widgets_text(self):
+        [label.setText(str(text)) for label, text in zip(self.labels.values(), self.label_values)]
+        [field.setText(str(text)) for field, text in zip(self.fields.values(), self.field_values)]
 
-        labels, field_widgets = self._create_qobjects()
+    def label_widgets(self):
+        """
+        generator that yields a row number and label widget for all labels
+        """
+        for index, label in enumerate(self.labels.values()):
+            yield index, label
 
-        self._set_widgets_size(labels, field_widgets)
+    def field_widgets(self):
+        """
+        generator that yields a row number and field widget for all fields
+        """
+        for index, field in enumerate(self.fields.values()):
+            yield index, field
 
-        self._add_to_layout(layout_, labels, field_widgets)
+    def _add_widgets_to_layout(self):
+        [self.fields_container_layout.addWidget(label, index, 0) for index, label in self.label_widgets()]
+        [self.fields_container_layout.addWidget(field, index, 1) for index, field in self.field_widgets()]
 
-        self.fields_widget.setLayout(layout_)
+    def clear_layout(self):
+        while not self.fields_container_layout.isEmpty():
+            # According to some guy on the internet, this stops memory leaks
+            # https://stackoverflow.com/questions/4528347/clear-all-widgets-in-a-layout-in-pyqt/13103617
+            self.fields_container_layout.itemAt(0).widget().deleteLater()
+            self.fields_container_layout.itemAt(0).widget().setParent(None)
 
+    def _set_fields(self):
+
+        # FIXME: layout must be only be set the first time this method is called
+        # Add a flag to determine whether this is the first time
+        if self.first_time:
+            self.first_time = False
+            self.fields_container_layout = QGridLayout(self.fields_container)
+
+        else:
+            self.clear_layout()
+
+        self.labels, self.fields = self._make_widgets()
+
+        self._set_widgets_size()
+        self._add_widgets_to_layout()
+        self._set_widgets_text()
+
+        self.fields_container.setLayout(self.fields_container_layout)
+
+    def remove_all(self):
+        """
+        removes all fields and labels from layout
+        """
+
+    def check_current_collection(self):
+        if self.db.current_collection is None:
+            raise CollectionNotChosenYetException()
+
+    def _get_label_and_field_values(self):
+        
+        template = self.db.current_collection.get_field_template()
+
+        label_values = template.keys()
+        field_values= template.values()
+
+        print("Got field and label values!")
+
+        for label, field in zip(label_values, field_values):
+            print(f"{label}: {field}")
+
+        return label_values, field_values
+    
+    def set_fields(self):
+        self.check_current_collection()
+
+        self.label_values, self.field_values = self._get_label_and_field_values()
+
+        self._set_fields()
+
+    def disable_field(self, field_name):
+        self.fields[field_name].setDisabled(True)
+
+    def show(self):
+        try:
+            self.set_fields()
+            return super().show()
+            
+        except CollectionNotChosenYetException as e:
+            # TODO: Show popup window to tell user to choose database and collection first
+            print("Cannot open CRUD window without choosing a collection first")
+            return
 
 # endregion Base Classes
 
@@ -391,8 +467,16 @@ class CollectionWindow(PopupWindow):
 
         self.parent_gui.update_information_labels()
 
+    def show(self):
+        if self.db.current_db is None:
+            # TODO: show popup message telling user to choose a database first
+            print("Must choose database before you can open the Collection Window")
+            return
+        else:
+            return super().show()
 
-# endregion Edit DB / Collcetion Buttons
+
+# endregion Edit DB / Collection Buttons
 
 # region CRUD Buttons
 
@@ -400,28 +484,45 @@ class CreateWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._event_listener_manager = CreateWindowListener(self, self.db)
+        self._event_listener = CreateWindowListener(self, self.db)
+
+    def set_fields(self):
+        super().set_fields()
+        
+        self.disable_field('_id')
 
 
 class FilterWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._event_listener_manager = FilterWindowListener(self, self.db)
+        self._event_listener = FilterWindowListener(self, self.db)
+
+    def set_fields(self):
+        super().set_fields()
 
 
 class ModifyWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._event_listener_manager = ModifyWindowListener(self, self.db)
+        self._event_listener = ModifyWindowListener(self, self.db)
 
+    def set_fields(self):
+        super().set_fields()
+
+        self.disable_field('_id')
 
 class DeleteWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._event_listener_manager = DeleteWindowListener(self, self.db)
+        self._event_listener = DeleteWindowListener(self, self.db)
+
+    def set_fields(self):
+        super().set_fields()
+
+        self.disable_field('_id')
 
 # endregion CRUD Buttons
 

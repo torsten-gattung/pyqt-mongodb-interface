@@ -28,7 +28,7 @@ class MainWindowListener(EventListener):
     def _add_event_listeners(self):
         # Bind all database methods into frontend elements
         self._add_crud_buttons_listeners()
-        self._add_function_buttons_listeners()
+        self.add_function_button_listeners()
         self._add_edit_db_and_collection_buttons_listeners()
 
     def _add_crud_buttons_listeners(self):
@@ -37,40 +37,22 @@ class MainWindowListener(EventListener):
         modify_button = self.gui.widget_objects['modifyButton']
         delete_button = self.gui.widget_objects['deleteButton']
 
-        #####
-
-        # NOTE: query_data will be assigned from the popup windows created later
-        query_data = ""
-
-        ######
-
-        def create_query(query_data=query_data):
-            self.db.create_query(query_data)
-
-        def filter_query(query_data=query_data):
-            self.db.filter_query(query_data)
-
-        def modify_query(query_data=query_data):
-            self.db.modify_query(query_data)
-
-        def delete_query(query_data=query_data):
-            self.db.delete_query(query_data)
-
-        #####
-
         create_button.clicked.connect(self.gui.show_create_window)
         filter_button.clicked.connect(self.gui.show_filter_window)
         modify_button.clicked.connect(self.gui.show_modify_window)
         delete_button.clicked.connect(self.gui.show_delete_window)
 
-    def _add_function_buttons_listeners(self):
+    def add_function_button_listeners(self):
 
         for button_id, button in self.gui.widget_objects.items():
             # this RegEx catches all objects with id ~= "functionNumberButton"
             if re.match("^function.*Button$", button_id):
-                self._add_button_listener(button, button_id)
+                self._add_function_button_listener(button, button_id)
 
-    def _add_button_listener(self, button, button_name: str):
+    def _add_function_button_listener(self, button, button_name: str):
+        """
+        Helper for self.add_function_button_listeners
+        """
         button.clicked.connect(
             lambda: self.gui.show_function_window(button_name, button))
 
@@ -87,16 +69,24 @@ class DynamicPopupWindowListener(EventListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._add_field_listeners()
+        # self._add_field_listeners()
 
     def _add_field_listeners(self):
-        for widget in self.gui.fields_widget.children():
+        for widget in self.gui.fields_container.children():
 
             expected_type = type(QLineEdit())
 
             if type(widget) == expected_type:
-                widget.setText(
-                    "This is development code, so I can put anything I want here")
+                widget.setText("placeholder")
+
+    def _list_all_field_data(self):
+        for widget in self.gui.fields_container.children():
+
+            if type(widget) == type(QLabel):
+                print(widget.text(), end="")
+
+            if type(widget) == type(QLineEdit()):
+                print(widget.text())
 
 
 # endregion Base Classes
@@ -266,15 +256,6 @@ class CreateWindowListener(DynamicPopupWindowListener):
         self.gui.widget_objects['createButton'].clicked.connect(
             self._list_all_field_data)
 
-    def _list_all_field_data(self):
-        for widget in self.gui.fields_widget.children():
-
-            if type(widget) == type(QLabel):
-                print(widget.text(), end="")
-
-            if type(widget) == type(QLineEdit()):
-                print(widget.text())
-
 
 class FilterWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
@@ -287,15 +268,6 @@ class FilterWindowListener(DynamicPopupWindowListener):
             lambda: print("Filtered Item (fake)"))
         self.gui.widget_objects['filterButton'].clicked.connect(
             self._list_all_field_data)
-
-    def _list_all_field_data(self):
-        for widget in self.gui.fields_widget.children():
-
-            if type(widget) == type(QLabel):
-                print(widget.text(), end="")
-
-            if type(widget) == type(QLineEdit()):
-                print(widget.text())
 
 
 class ModifyWindowListener(DynamicPopupWindowListener):
@@ -310,15 +282,6 @@ class ModifyWindowListener(DynamicPopupWindowListener):
         self.gui.widget_objects['updateButton'].clicked.connect(
             self._list_all_field_data)
 
-    def _list_all_field_data(self):
-        for widget in self.gui.fields_widget.children():
-
-            if type(widget) == type(QLabel):
-                print(widget.text(), end="")
-
-            if type(widget) == type(QLineEdit()):
-                print(widget.text())
-
 
 class DeleteWindowListener(DynamicPopupWindowListener):
     def __init__(self, *args, **kwargs):
@@ -332,13 +295,5 @@ class DeleteWindowListener(DynamicPopupWindowListener):
         self.gui.widget_objects['deleteButton'].clicked.connect(
             self._list_all_field_data)
 
-    def _list_all_field_data(self):
-        for widget in self.gui.fields_widget.children():
-
-            if type(widget) == type(QLabel):
-                print(widget.text(), end="")
-
-            if type(widget) == type(QLineEdit()):
-                print(widget.text())
 
 # endregion CRUD Window Listeners

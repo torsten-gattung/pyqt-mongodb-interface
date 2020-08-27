@@ -62,7 +62,7 @@ class MongoHandler:
             traceback.print_exc()
 
     def switch_collection(self, collection_name):
-        if collection_name in self.current_db.list_collection_names():
+        if collection_name in self.current_db.collection_dict.keys():
             self.current_collection = self.current_db.collection_dict[collection_name]
             print(f"Switched to collection '{collection_name}'")
 
@@ -70,13 +70,20 @@ class MongoHandler:
             raise ClientAndServerOutOfSyncException("Collection list and mongo server are out of sync!")
             traceback.print_exc()
 
+    def get_field_template(self):
+        if self.current_collection is None:
+            raise CollectionNotChosenYetException("Must choose collection before get_field_template can be called")
+        
+        else:
+            return self.current_collection.get_field_template()
+
 
 class Database(MongoDatabase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.collections = self.get_collection_objects()
-        
+        self.collection_dict = self.get_collection_objects()
+
     def get_collection_objects(self):
         collection_dict = {}
 
@@ -91,10 +98,17 @@ class Collection(MongoCollection):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def get_field_template(self):
+        template_ = self.find_one()
+        return template_
+
 
 if __name__ == "__main__":
     handler = MongoHandler()
+    handler.connect("localhost", 27017)
 
-    test_db = handler.db_dict['test'].collections['test_db']
+    test_db = handler.db_dict['test'].collection_dict['test_db']
+
+    print(test_db.get_field_template())
 
     print(test_db.count_documents({}))

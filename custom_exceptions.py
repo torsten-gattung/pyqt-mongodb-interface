@@ -17,3 +17,8 @@ class BadFieldValueException(Exception):
 class ClientAndServerOutOfSyncException(RuntimeError):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class CollectionNotChosenYetException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
