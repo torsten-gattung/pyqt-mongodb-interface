@@ -20,6 +20,9 @@ default_port = global_vars["SERVER"]["PORT"]
 class MongoHandler:
 
     def __init__(self, host=default_host, port=default_port):
+
+        self._client: MongoClient = None
+
         self.host = host
         self.port = port
         
@@ -59,7 +62,6 @@ class MongoHandler:
 
         else:
             raise ClientAndServerOutOfSyncException("Database list and mongo server are out of sync!")
-            traceback.print_exc()
 
     def switch_collection(self, collection_name):
         if collection_name in self.current_db.collection_dict.keys():
@@ -68,7 +70,6 @@ class MongoHandler:
 
         else:
             raise ClientAndServerOutOfSyncException("Collection list and mongo server are out of sync!")
-            traceback.print_exc()
 
     def get_field_template(self):
         if self.current_collection is None:
@@ -84,6 +85,16 @@ class MongoHandler:
             count_ += collection.count_documents({})
 
         return count_
+
+    def create_new_database(self, db_name, template):
+
+        # TODO: implement usage of templates
+
+        self._client[db_name].create_collection("place_holder_collection")
+        print("Database has been created!")
+
+        self.continue_init()
+
 
 class Database(MongoDatabase):
     def __init__(self, *args, **kwargs):

@@ -18,5 +18,9 @@
         "databaseList",
         "templateList"
 
+    ],
+    
+    "QLineEdit": [
+        "databaseNameInput"
     ]
 }

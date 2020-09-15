@@ -170,11 +170,16 @@ class DatabaseWindowListener(EventListener):
         super().__init__(*args, **kwargs)
 
         self.select_button = self._get_select_button()
+        self.create_db_button = self._get_create_db_button()
+
 
         self._add_event_listeners()
 
     def _get_select_button(self):
         return self.gui.widget_objects['selectButton']
+
+    def _get_create_db_button(self):
+        return self.gui.widget_objects['createDatabaseButton']
 
     def _add_event_listeners(self):
         self._add_buttons()
@@ -183,6 +188,7 @@ class DatabaseWindowListener(EventListener):
 
     def _add_buttons(self):
         self.select_button.clicked.connect(self.select_button_onclick)
+        self.create_db_button.clicked.connect(self.create_db_button_onclick)
 
     def select_button_onclick(self):
 
@@ -195,12 +201,20 @@ class DatabaseWindowListener(EventListener):
 
             self.gui.close()
 
+    def create_db_button_onclick(self):
+        self.gui.create_new_database()
+
+        self.gui.update_database_list()
 
     def _add_line_edits(self):
         pass
 
     def _add_labels(self):
         pass
+
+    def create_new_database(self):
+        pass
+    
 
 
 class CollectionWindowListener(EventListener):

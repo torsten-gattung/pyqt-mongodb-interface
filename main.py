@@ -31,8 +31,6 @@ def start_program(global_vars=global_vars):
     mongo_handler = MongoHandler()
 
     launch_welcome_window(mongo_handler)
-    
-    # main_window = launch_main_window(mongo_handler)
 
     app.exec_()
 
