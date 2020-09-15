@@ -1,0 +1,10 @@
+{
+    "QLabel": [
+        "message"
+    ],
+
+    "QPushButton": [
+
+        "okayButton"
+    ]
+}

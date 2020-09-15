@@ -229,6 +229,9 @@ class PopupWindow(Gui):
         super().__init__(*args, **kwargs)
         self.parent_gui = parent_gui
 
+        # Bring new window to front
+        self.raise_()
+
     def show(self):
         self.parent_gui.setDisabled(True)
         return super().show()
@@ -359,8 +362,45 @@ class DynamicPopupWindow(PopupWindow):
             
         except CollectionNotChosenYetException as e:
             # TODO: Show popup window to tell user to choose database and collection first
+            self.msg = PopupTextmessage(self, text="Must choose Database and Collection First")
             print("Cannot open CRUD window without choosing a collection first")
             return
+
+
+class PopupTextmessage(PopupWindow):
+    def __init__(self, parent, text="Warning"):
+
+        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_TEXTMESSAGE'])
+        path_ = global_vars['GUI']['POPUP_TEXTMESSAGE']
+
+        super().__init__(parent_gui=parent,
+                         widget_ids=ids,
+                         gui_file_path=path_,
+                         db=None
+                        )
+
+        self.setMessage(text)
+
+        self.setOkayButtonListener()
+
+        self.show()
+
+    def setMessage(self, text):
+        self.widget_objects['message'].setText(text)
+
+    def findOkayButton(self):
+        return self.widget_objects['okayButton']
+
+    def setOkayButtonListener(self):
+        okayButton = self.findOkayButton()
+        okayButton.clicked.connect(self.okayButtonOnClick)
+
+    def okayButtonOnClick(self):
+        self.close()
+
+    def closeEvent(self, a0):
+        return super().closeEvent(a0)
+
 
 # endregion Base Classes
 
@@ -575,8 +615,8 @@ class CollectionWindow(PopupWindow):
 
     def show(self):
         if self.db.current_db is None:
-            # TODO: show popup message telling user to choose a database first
             print("Must choose database before you can open the Collection Window")
+            self.msg = PopupTextmessage(self, text="Must choose database before you can open the Collection Window")
             return
         else:
             return super().show()
@@ -618,6 +658,7 @@ class ModifyWindow(DynamicPopupWindow):
         super().set_fields()
 
         self.disable_field('_id')
+
 
 class DeleteWindow(DynamicPopupWindow):
     def __init__(self, *args, **kwargs):

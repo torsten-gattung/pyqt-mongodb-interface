@@ -15,7 +15,9 @@
         "FILTER": "ui/filter_item_gui.ui",
         "DELETE": "ui/delete_item_gui.ui",
 
-        "FUNCTION_BLANK": "ui/function_button_blank_gui.ui"
+        "FUNCTION_BLANK": "ui/function_button_blank_gui.ui",
+
+        "POPUP_TEXTMESSAGE": "ui/popup_textmessage.ui"
 
     },
 
@@ -30,7 +32,9 @@
         "FILTER": "widget_ids/FILTER_WIDGET_ID.json",
         "DELETE": "widget_ids/DELETE_WIDGET_ID.json",
 
-        "FUNCTION_BLANK": "widget_ids/FUNCTION_BLANK_WIDGET_ID.json"
+        "FUNCTION_BLANK": "widget_ids/FUNCTION_BLANK_WIDGET_ID.json",
+
+        "POPUP_TEXTMESSAGE": "widget_ids/POPUP_TEXTMESSAGE.json"
 
     }
 }
