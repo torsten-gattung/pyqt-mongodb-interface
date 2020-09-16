@@ -176,6 +176,7 @@ class DatabaseWindowListener(EventListener):
 
         self._add_event_listeners()
 
+
     def _get_select_button(self):
         return self.gui.widget_objects['selectButton']
 
@@ -185,26 +186,21 @@ class DatabaseWindowListener(EventListener):
     def _get_delete_db_button(self):
         return self.gui.widget_objects['deleteDatabaseButton']
 
+
     def _add_event_listeners(self):
         self._add_buttons()
         self._add_line_edits()
         self._add_labels()
+
 
     def _add_buttons(self):
         self.select_button.clicked.connect(self.select_button_onclick)
         self.create_db_button.clicked.connect(self.create_db_button_onclick)
         self.delete_db_button.clicked.connect(self.delete_db_button_onclick)
 
+
     def select_button_onclick(self):
-
-        selected_db = self.gui.get_selected_database()
-
-        if selected_db is not None:
-            self.db.switch_db(selected_db)
-            self.gui.update_collection_list()
-            self.gui.update_information_labels()
-
-            self.gui.close()
+        self.gui.switch_to_selected_database()
 
     def create_db_button_onclick(self):
         self.gui.create_new_database()
@@ -216,45 +212,77 @@ class DatabaseWindowListener(EventListener):
 
         # self.gui.update_database_list()
 
+
     def _add_line_edits(self):
         pass
+
 
     def _add_labels(self):
         pass
     
-
 
 class CollectionWindowListener(EventListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.select_button = self._get_select_button()
+        self.change_name_button = self._get_change_name_button()
+        self.export_collection_button = self._get_export_button()
+        self.create_collection_button = self._get_create_collection_button()
+        self.drop_collection_button = self._get_drop_collection_button()
 
         self._add_event_listeners()
 
-    def _get_select_button(self):
-        return self.gui.widget_objects['selectButton']
 
     def _add_event_listeners(self):
         self._add_buttons()
         self._add_line_edits()
         self._add_labels()
 
+
     def _add_buttons(self):
         self.select_button.clicked.connect(self.select_button_onclick)
+        self.change_name_button.clicked.connect(self.change_name_button_onclick)
+        self.export_collection_button.clicked.connect(self.export_collection_button_onclick)
+        self.create_collection_button.clicked.connect(self.create_collection_button_onclick)
+        self.drop_collection_button.clicked.connect(self.drop_collection_button_onclick)
+
+
+    def _get_select_button(self):
+        return self.gui.widget_objects['selectButton']
+
+    def _get_change_name_button(self):
+        return self.gui.widget_objects['changeCollectionNameButton']
+
+    def _get_export_button(self):
+        return self.gui.widget_objects['exportButton']
+
+    def _get_create_collection_button(self):
+        return self.gui.widget_objects['createCollectionButton']
+
+    def _get_drop_collection_button(self):
+        return self.gui.widget_objects['dropCollectionButton']
+
 
     def select_button_onclick(self):
-        selected_collection = self.gui.get_selected_collection()
+        self.gui.switch_to_selected_collection()
 
-        if selected_collection is not None:
-            self.db.switch_collection(selected_collection)
+    def change_name_button_onclick(self):
+        self.gui.change_collection_name()
 
-            self.gui.update_information_labels()
+    def export_collection_button_onclick(self):
+        self.gui.export_collection()
 
-            self.gui.close()
+    def create_collection_button_onclick(self):
+        self.gui.create_new_collection()
+
+    def drop_collection_button_onclick(self):
+        self.gui.drop_selected_collection()
+
 
     def _add_line_edits(self):
         pass
+
 
     def _add_labels(self):
         pass

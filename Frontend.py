@@ -335,7 +335,7 @@ class DynamicPopupWindow(PopupWindow):
         
         template = self.db.current_collection.get_field_template()
 
-        # BUG: this will crash program if given collection is empty
+        # BUG 4: this will crash program if given collection is empty
         label_values = template.keys()
         field_values= template.values()
 
@@ -403,6 +403,55 @@ class PopupTextmessage(PopupWindow):
         return super().closeEvent(a0)
 
 
+class PopupConfirmBox(PopupWindow):
+    def __init__(self, parent, text="Warning", callback=None):
+    
+        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_CONFIRM'])
+        path_ = global_vars['GUI']['POPUP_CONFIRM']
+
+        super().__init__(parent_gui=parent,
+                         widget_ids=ids,
+                         gui_file_path=path_,
+                         db=None
+                        )
+
+        self.callback = callback
+
+        self.confirm_button = self._get_confirm_button()
+        self.cancel_button = self._get_cancel_button()
+
+        self.set_button_listeners()
+
+        self.setMessage(text)
+
+        self.show()
+
+
+    def _get_confirm_button(self):
+        return self.widget_objects['confirmButton']
+
+    def _get_cancel_button(self):
+        return self.widget_objects['cancelButton']
+
+
+    def set_button_listeners(self):
+        self.confirm_button.clicked.connect(self.confirm_button_onclick)        
+        self.cancel_button.clicked.connect(self.cancel_button_onclick)
+
+
+    def confirm_button_onclick(self):
+        self.close()
+        return self.callback()
+
+    def cancel_button_onclick(self):
+        self.close()
+        return
+
+
+    def setMessage(self, text):
+        self.widget_objects['message'].setText(text)
+
+
 # endregion Base Classes
 
 
@@ -445,17 +494,20 @@ class DatabaseWindow(PopupWindow):
         self._assign_information_labels()
         self.update_information_labels(with_default=True)
 
+
     def _assign_information_labels(self):
         self.current_db_label = self.widget_objects['currentDatabaseLabel']
         self.local_col_count_label = self.widget_objects['collectionCountLabel']
         self.local_doc_count_label = self.widget_objects['localDocumentCountLabel']
         self.database_count_label = self.widget_objects['databaseCountLabel']
 
-    def _get_database_list(self):
-        return self.widget_objects['databaseList']
 
     def update_collection_list(self):
         self.parent_gui.update_collection_list()
+
+
+    def _get_database_list(self):
+        return self.widget_objects['databaseList']
 
     def empty_db_list(self):
         
@@ -480,11 +532,11 @@ class DatabaseWindow(PopupWindow):
 
             return selected_db
         except IndexError as e:
-            # TODO: add popup warning here
-            self.msg = PopupTextmessage(self, text="Must select a database first")
-            print("Must Select a database first!")
-            raise DatabaseNotSelectedException("Must select database first")
-            return
+
+            msg = "Must select a database first"
+
+            raise DatabaseNotSelectedException(msg)
+
 
     def _update_current_database_label(self, with_default):
         if with_default:
@@ -529,6 +581,21 @@ class DatabaseWindow(PopupWindow):
         if not with_default:
             self.parent_gui.update_information_labels()
 
+
+    def switch_to_selected_database(self):
+        try:
+            selected_db = self.get_selected_database()
+
+            self.db.switch_db(selected_db)
+            self.update_collection_list()
+            self.update_information_labels()
+
+            self.close()
+
+        except DatabaseNotSelectedException:
+            msg = "Must Choose Database First"
+            self.msg = PopupTextmessage(self, text=msg)
+
     def create_new_database(self):
 
         # TODO: add validation for database names
@@ -544,6 +611,7 @@ class DatabaseWindow(PopupWindow):
         self.update_database_list()
         self.msg = PopupTextmessage(self, f"Created Database: {database_name}")
 
+
     def delete_selected_database(self):
         try:
             selected_db = self.get_selected_database()
@@ -556,6 +624,11 @@ class DatabaseWindow(PopupWindow):
 
         except DatabaseNotSelectedException:
             return
+
+
+    def showEvent(self, a0):
+        self.update_database_list()
+        super().showEvent(a0)
 
 
 class CollectionWindow(PopupWindow):
@@ -575,14 +648,17 @@ class CollectionWindow(PopupWindow):
         self.assign_information_labels()
         self.update_information_labels(with_default=True)
 
+
     def assign_information_labels(self):
         self.current_col_label = self.widget_objects['currentCollectionLabel']
         self.current_db_label = self.widget_objects['currentDatabaseLabel']
         self.db_count_label = self.widget_objects['databaseCountLabel']
         self.doc_count_label = self.widget_objects['documentCountLabel']
 
+
     def _get_collection_list_widget(self):
         return self.widget_objects['collectionList']
+
 
     def clear_collection_list(self):
         while len(self.collection_list) > 0:
@@ -598,7 +674,6 @@ class CollectionWindow(PopupWindow):
 
     def _get_collection_names(self):
         selected_db = self.db.current_db
-
         return selected_db.list_collection_names()
 
     def get_selected_collection(self):
@@ -608,7 +683,22 @@ class CollectionWindow(PopupWindow):
 
         except IndexError as e:
             print("Must select a collection first!")
+            raise CollectionNotChosenYetException("Must select a collection first")
             return
+
+    def switch_to_selected_collection(self):
+        try:
+            selected_collection = self.get_selected_collection()
+
+            self.db.switch_collection(selected_collection)
+
+            self.update_information_labels()
+
+            self.close()
+
+        except CollectionNotChosenYetException:
+            self.msg = PopupTextmessage(self, "Must select a collection first")
+
 
     def _update_current_col_label(self, with_default):
         if with_default:
@@ -652,6 +742,100 @@ class CollectionWindow(PopupWindow):
 
         if not with_default:
             self.parent_gui.update_information_labels()
+
+
+    def get_changed_collection_name_field(self):
+        return self.widget_objects['collectionNameLineEdit']
+
+    def get_changed_collection_name(self):
+        collection_name = self.get_changed_collection_name_field().text()
+
+        if len(collection_name) == 0:
+            raise BadFieldValueException("No collection name was provided")
+
+        else:
+            return collection_name
+
+    def change_collection_name(self):
+        try:
+            selected_collection = self.get_selected_collection()
+            new_collection_name = self.get_changed_collection_name()
+
+            self.db.change_collection_name(selected_collection, new_collection_name)
+
+            self.update_collection_list()
+            self.update_information_labels(with_default=True)
+
+        except CollectionNotChosenYetException:
+            self.msg = PopupTextmessage(self, "Must select a collection first")
+        
+        except BadFieldValueException:
+            self.msg = PopupTextmessage(self, "Must provide a new name for collection")
+
+
+    def get_new_collection_name_field(self):
+        return self.widget_objects['newCollectionNameLineEdit']
+
+    def get_new_collection_name(self):
+        new_collection_name = self.get_new_collection_name_field().text()
+
+        if len(new_collection_name) == 0:
+            raise BadFieldValueException("Must enter valid collection name")
+
+        else:
+            return new_collection_name
+
+    def create_new_collection(self):
+        try:
+            new_collection_name = self.get_new_collection_name()
+
+            self.db.create_new_collection(new_collection_name)
+
+            self.update_collection_list()
+
+            msg = f"Created collection: {new_collection_name}"
+            self.msg = PopupTextmessage(self, text=msg)
+
+        except BadFieldValueException:
+            self.msg = PopupTextmessage(self, "Must provide valid collection name first")
+
+
+    def _is_last_collection(self):
+        return len(self.collection_list) == 1
+
+    def _drop_selected_collection(self, selected_collection, is_last=False):
+            
+        self.db.drop_selected_collection(selected_collection, is_last=is_last)
+
+        if is_last:
+            self.clear_collection_list()
+            self.update_information_labels(with_default=True)
+            self.close()
+
+        else:
+            self.update_collection_list()
+
+    def drop_selected_collection(self):
+        try:
+            selected_collection = self.get_selected_collection()
+
+            if self._is_last_collection():
+
+                message = f"Warning! This will also drop this collection's database ({self.db.current_db.name})"
+                callback = lambda: self._drop_selected_collection(selected_collection, is_last=True)
+
+                self.msg = PopupConfirmBox(self, text=message, callback=callback)
+            
+            else:
+                self._drop_selected_collection(selected_collection)
+
+        except CollectionNotChosenYetException:
+            self.msg = PopupTextmessage(self, "Must select a collection first")
+
+
+    def export_collection(self):
+        print("Button Clicked!")
+
 
     def show(self):
         if self.db.current_db is None:

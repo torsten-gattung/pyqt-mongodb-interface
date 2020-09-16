@@ -180,7 +180,7 @@ QGroupBox {
         <x>400</x>
         <y>10</y>
         <width>321</width>
-        <height>16</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
@@ -236,20 +236,23 @@ QGroupBox {
       <property name="geometry">
        <rect>
         <x>400</x>
-        <y>90</y>
+        <y>180</y>
         <width>321</width>
-        <height>16</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Export collection data as json</string>
+       <string>Export collection as json</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
      <widget class="QPushButton" name="exportButton">
       <property name="geometry">
        <rect>
         <x>520</x>
-        <y>130</y>
+        <y>220</y>
         <width>91</width>
         <height>31</height>
        </rect>
@@ -479,7 +482,7 @@ QGroupBox {
         <x>10</x>
         <y>10</y>
         <width>721</width>
-        <height>16</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -563,9 +566,9 @@ QGroupBox {
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>200</y>
-        <width>721</width>
+        <x>400</x>
+        <y>130</y>
+        <width>291</width>
         <height>21</height>
        </rect>
       </property>
@@ -576,8 +579,8 @@ QGroupBox {
      <widget class="QLineEdit" name="newCollectionNameLineEdit">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>230</y>
+        <x>400</x>
+        <y>160</y>
         <width>251</width>
         <height>20</height>
        </rect>
@@ -626,14 +629,17 @@ QGroupBox {
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>691</width>
-        <height>16</height>
+        <x>10</x>
+        <y>109</y>
+        <width>721</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>Warning! This will permanently drop this collection. Be absolutely sure that you want to do this.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>

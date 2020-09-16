@@ -39,6 +39,7 @@ class MongoHandler:
 
         self.update_local_dbs()
 
+
     def update_local_dbs(self):
         self.db_dict = self.get_db_objects()
         self.db_names = self.db_dict.keys()
@@ -53,6 +54,7 @@ class MongoHandler:
 
         return db_dict
 
+
     def switch_db(self, db_name):
 
         if db_name in self.db_names:
@@ -63,6 +65,7 @@ class MongoHandler:
         else:
             raise ClientAndServerOutOfSyncException("Database list and mongo server are out of sync!")
 
+
     def switch_collection(self, collection_name):
         if collection_name in self.current_db.collection_dict.keys():
             self.current_collection = self.current_db.collection_dict[collection_name]
@@ -71,12 +74,17 @@ class MongoHandler:
         else:
             raise ClientAndServerOutOfSyncException("Collection list and mongo server are out of sync!")
 
+
     def get_field_template(self):
+        """
+        Returns an element in a collection to show the schema of the collection
+        """
         if self.current_collection is None:
             raise CollectionNotChosenYetException("Must choose collection before get_field_template can be called")
         
         else:
             return self.current_collection.get_field_template()
+
 
     def get_current_db_doc_count(self):
         count_ = 0
@@ -85,6 +93,7 @@ class MongoHandler:
             count_ += collection.count_documents({})
 
         return count_
+
 
     def create_new_database(self, db_name, template):
 
@@ -99,7 +108,38 @@ class MongoHandler:
         self._client.drop_database(db_name)
 
         self.update_local_dbs()
-        
+
+
+    def update_current_db_collections(self):
+        """
+        Update current_db to refer to database with updated collection names
+        """
+
+        current_db_name = self.current_db.name
+        self.current_db = self.db_dict[current_db_name]
+
+    def change_collection_name(self, selected_collection, new_collection_name):
+        self.current_db.collection_dict[selected_collection].rename(new_collection_name)
+
+        self.update_local_dbs()
+        self.update_current_db_collections()
+
+
+    def create_new_collection(self, new_collection_name):
+        self.current_db.create_collection(name=new_collection_name)
+
+        self.update_local_dbs()
+        self.update_current_db_collections()
+
+
+    def drop_selected_collection(self, selected_collection, is_last=False):
+        self.current_db.drop_collection(selected_collection)
+
+        if is_last:
+            self.current_db = None
+            self.current_collection = None
+
+        self.update_local_dbs()
 
 
 class Database(MongoDatabase):
@@ -123,6 +163,9 @@ class Collection(MongoCollection):
         super().__init__(*args, **kwargs)
 
     def get_field_template(self):
+        """
+        Returns an element in the collection to its schema
+        """
         template_ = self.find_one()
         return template_
 

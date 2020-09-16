@@ -1,0 +1,10 @@
+{
+    "QPushButton": [
+        "confirmButton",
+        "cancelButton"
+    ],
+
+    "QLabel": [
+        "message"
+    ]
+}

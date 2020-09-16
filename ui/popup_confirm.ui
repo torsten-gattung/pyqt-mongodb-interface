@@ -23,13 +23,13 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Info</string>
+   <string>Confirm Action</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="okayButton">
+   <widget class="QPushButton" name="confirmButton">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>90</x>
       <y>140</y>
       <width>111</width>
       <height>31</height>
@@ -39,7 +39,7 @@
      <enum>Qt::NoContextMenu</enum>
     </property>
     <property name="text">
-     <string>Okay</string>
+     <string>Confirm</string>
     </property>
    </widget>
    <widget class="QLabel" name="message">
@@ -64,6 +64,22 @@
     </property>
     <property name="wordWrap">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancelButton">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>140</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::NoContextMenu</enum>
+    </property>
+    <property name="text">
+     <string>Cancel</string>
     </property>
    </widget>
   </widget>

@@ -17,7 +17,8 @@
 
         "FUNCTION_BLANK": "ui/function_button_blank_gui.ui",
 
-        "POPUP_TEXTMESSAGE": "ui/popup_textmessage.ui"
+        "POPUP_TEXTMESSAGE": "ui/popup_textmessage.ui",
+        "POPUP_CONFIRM": "ui/popup_confirm.ui"
 
     },
 
@@ -34,7 +35,8 @@
 
         "FUNCTION_BLANK": "widget_ids/FUNCTION_BLANK_WIDGET_ID.json",
 
-        "POPUP_TEXTMESSAGE": "widget_ids/POPUP_TEXTMESSAGE.json"
+        "POPUP_TEXTMESSAGE": "widget_ids/POPUP_TEXTMESSAGE.json",
+        "POPUP_CONFIRM": "widget_ids/POPUP_CONFIRM.json"
 
     }
 }
