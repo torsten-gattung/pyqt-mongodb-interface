@@ -459,37 +459,18 @@ class DatabaseWindow(PopupWindow):
 
     def empty_db_list(self):
         
-        for _ in range(6):
-            item = self.db_list.itemAt(0)
-            print(item)
-
-        # for child in self.db_list.children():
-        #     self.db_list.removeItemWidget(child)
-        #     del child
-
-        # while len(self.db_list.children()) > 0:
-        #     QListWidget.removeItemWidget()
-        #     item = self.db_list.takeItem(0)
-        #     self.db_list.removeItemWidget(item)
+        for _ in range(self.db_list.count()):
+            self.db_list.takeItem(0)
 
     def populate_database_list(self):
-        
-
         self.db_list.addItems(self.db.db_names)
-
-        # BUG: db list gets duplicated when a new db is added
-        # SOLUTION: empty db list using itemAt and takeItem
-
-        item = self.db_list.itemAt(0, 1)
-        print(item)
 
     def update_database_list(self):
 
         # Always empty list first
         self.empty_db_list()
 
-        self.db_list.addItems(self.db.db_names)
-
+        self.populate_database_list()
 
     def get_selected_database(self):
         selected_db = ""
@@ -550,7 +531,7 @@ class DatabaseWindow(PopupWindow):
             self.parent_gui.update_information_labels()
 
     def create_new_database(self):
-        
+
         db_name_input = self.widget_objects['databaseNameInput']
         # selected_template = self.widget_objects['templateList'].selectedItems()[0]
 
@@ -560,6 +541,9 @@ class DatabaseWindow(PopupWindow):
         self.db.create_new_database(db_name=database_name, template=None)
 
         self.update_database_list()
+
+    def delete_selected_database(self):
+        pass
 
 
 class CollectionWindow(PopupWindow):

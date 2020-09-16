@@ -37,9 +37,9 @@ class MongoHandler:
         else:
             self._client = MongoClient(self.host, self.port)
 
-        self.continue_init()
+        self.update_local_dbs()
 
-    def continue_init(self):
+    def update_local_dbs(self):
         self.db_dict = self.get_db_objects()
         self.db_names = self.db_dict.keys()
 
@@ -93,7 +93,7 @@ class MongoHandler:
         self._client[db_name].create_collection("place_holder_collection")
         print("Database has been created!")
 
-        self.continue_init()
+        self.update_local_dbs()
 
 
 class Database(MongoDatabase):
