@@ -95,6 +95,12 @@ class MongoHandler:
 
         self.update_local_dbs()
 
+    def drop_selected_database(self, db_name):
+        self._client.drop_database(db_name)
+
+        self.update_local_dbs()
+        
+
 
 class Database(MongoDatabase):
     def __init__(self, *args, **kwargs):

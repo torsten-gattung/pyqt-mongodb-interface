@@ -481,8 +481,9 @@ class DatabaseWindow(PopupWindow):
             return selected_db
         except IndexError as e:
             # TODO: add popup warning here
+            self.msg = PopupTextmessage(self, text="Must select a database first")
             print("Must Select a database first!")
-
+            raise DatabaseNotSelectedException("Must select database first")
             return
 
     def _update_current_database_label(self, with_default):
@@ -520,8 +521,6 @@ class DatabaseWindow(PopupWindow):
 
     def update_information_labels(self, with_default=False):
 
-        # TODO: update information labels for Database Window
-
         self._update_current_database_label(with_default)
         self._update_local_collection_count(with_default)
         self._update_local_doc_count(with_default)
@@ -532,6 +531,8 @@ class DatabaseWindow(PopupWindow):
 
     def create_new_database(self):
 
+        # TODO: add validation for database names
+
         db_name_input = self.widget_objects['databaseNameInput']
         # selected_template = self.widget_objects['templateList'].selectedItems()[0]
 
@@ -541,9 +542,20 @@ class DatabaseWindow(PopupWindow):
         self.db.create_new_database(db_name=database_name, template=None)
 
         self.update_database_list()
+        self.msg = PopupTextmessage(self, f"Created Database: {database_name}")
 
     def delete_selected_database(self):
-        pass
+        try:
+            selected_db = self.get_selected_database()
+            self.db.drop_selected_database(db_name=selected_db)
+
+            self.update_database_list()
+            self.update_information_labels(with_default=True)
+
+            self.msg = PopupTextmessage(self, f"Dropped {selected_db}")
+
+        except DatabaseNotSelectedException:
+            return
 
 
 class CollectionWindow(PopupWindow):

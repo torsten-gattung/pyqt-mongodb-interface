@@ -22,3 +22,8 @@ class ClientAndServerOutOfSyncException(RuntimeError):
 class CollectionNotChosenYetException(Exception):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class DatabaseNotSelectedException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
