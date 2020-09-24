@@ -242,7 +242,91 @@ class PopupWindow(Gui):
         return super().closeEvent(a0)
 
 
-class DynamicPopupWindow(PopupWindow):
+class PopupTextmessage(PopupWindow):
+    def __init__(self, parent, text="Warning"):
+
+        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_TEXTMESSAGE'])
+        path_ = global_vars['GUI']['POPUP_TEXTMESSAGE']
+
+        super().__init__(parent_gui=parent,
+                         widget_ids=ids,
+                         gui_file_path=path_,
+                         db=None
+                        )
+
+        self.setMessage(text)
+
+        self.setOkayButtonListener()
+
+        self.show()
+
+    def setMessage(self, text):
+        self.widget_objects['message'].setText(text)
+
+    def findOkayButton(self):
+        return self.widget_objects['okayButton']
+
+    def setOkayButtonListener(self):
+        okayButton = self.findOkayButton()
+        okayButton.clicked.connect(self.okayButtonOnClick)
+
+    def okayButtonOnClick(self):
+        self.close()
+
+    def closeEvent(self, a0):
+        return super().closeEvent(a0)
+
+
+class PopupConfirmBox(PopupWindow):
+    def __init__(self, parent, text="Warning", callback=None):
+    
+        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_CONFIRM'])
+        path_ = global_vars['GUI']['POPUP_CONFIRM']
+
+        super().__init__(parent_gui=parent,
+                         widget_ids=ids,
+                         gui_file_path=path_,
+                         db=None
+                        )
+
+        self.callback = callback
+
+        self.confirm_button = self._get_confirm_button()
+        self.cancel_button = self._get_cancel_button()
+
+        self.set_button_listeners()
+
+        self.setMessage(text)
+
+        self.show()
+
+
+    def _get_confirm_button(self):
+        return self.widget_objects['confirmButton']
+
+    def _get_cancel_button(self):
+        return self.widget_objects['cancelButton']
+
+
+    def set_button_listeners(self):
+        self.confirm_button.clicked.connect(self.confirm_button_onclick)        
+        self.cancel_button.clicked.connect(self.cancel_button_onclick)
+
+
+    def confirm_button_onclick(self):
+        self.close()
+        return self.callback()
+
+    def cancel_button_onclick(self):
+        self.close()
+        return
+
+
+    def setMessage(self, text):
+        self.widget_objects['message'].setText(text)
+
+
+class CRUDWindow(PopupWindow):
     def __init__(self, disable_field_edit=False, fields=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
         
@@ -255,8 +339,6 @@ class DynamicPopupWindow(PopupWindow):
         self.fields = {}
 
         self.fields_container = self.get_fields_container()
-
-        self.event_listener_manager = DynamicPopupWindowListener(self, self.db)
 
 
     def get_fields_container(self):
@@ -357,6 +439,19 @@ class DynamicPopupWindow(PopupWindow):
             self._set_fields(empty_collection=True)
 
 
+    def disable_id_field(self):
+        try:
+            self.disable_field('_id')
+        
+        except KeyError as e:
+            # Likely empty collection
+            pass
+
+        except RuntimeError as r:
+            # This happens because '_id' key is present but referenced object is deleted
+            pass
+
+
     def disable_field(self, field_name):
         """
         Makes a field unable to have its value modified
@@ -374,90 +469,6 @@ class DynamicPopupWindow(PopupWindow):
             self.msg = PopupTextmessage(self, text="Must choose Database and Collection First")
             print("Cannot open CRUD window without choosing a collection first")
             return
-
-
-class PopupTextmessage(PopupWindow):
-    def __init__(self, parent, text="Warning"):
-
-        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_TEXTMESSAGE'])
-        path_ = global_vars['GUI']['POPUP_TEXTMESSAGE']
-
-        super().__init__(parent_gui=parent,
-                         widget_ids=ids,
-                         gui_file_path=path_,
-                         db=None
-                        )
-
-        self.setMessage(text)
-
-        self.setOkayButtonListener()
-
-        self.show()
-
-    def setMessage(self, text):
-        self.widget_objects['message'].setText(text)
-
-    def findOkayButton(self):
-        return self.widget_objects['okayButton']
-
-    def setOkayButtonListener(self):
-        okayButton = self.findOkayButton()
-        okayButton.clicked.connect(self.okayButtonOnClick)
-
-    def okayButtonOnClick(self):
-        self.close()
-
-    def closeEvent(self, a0):
-        return super().closeEvent(a0)
-
-
-class PopupConfirmBox(PopupWindow):
-    def __init__(self, parent, text="Warning", callback=None):
-    
-        ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_CONFIRM'])
-        path_ = global_vars['GUI']['POPUP_CONFIRM']
-
-        super().__init__(parent_gui=parent,
-                         widget_ids=ids,
-                         gui_file_path=path_,
-                         db=None
-                        )
-
-        self.callback = callback
-
-        self.confirm_button = self._get_confirm_button()
-        self.cancel_button = self._get_cancel_button()
-
-        self.set_button_listeners()
-
-        self.setMessage(text)
-
-        self.show()
-
-
-    def _get_confirm_button(self):
-        return self.widget_objects['confirmButton']
-
-    def _get_cancel_button(self):
-        return self.widget_objects['cancelButton']
-
-
-    def set_button_listeners(self):
-        self.confirm_button.clicked.connect(self.confirm_button_onclick)        
-        self.cancel_button.clicked.connect(self.cancel_button_onclick)
-
-
-    def confirm_button_onclick(self):
-        self.close()
-        return self.callback()
-
-    def cancel_button_onclick(self):
-        self.close()
-        return
-
-
-    def setMessage(self, text):
-        self.widget_objects['message'].setText(text)
 
 
 # endregion Base Classes
@@ -481,6 +492,7 @@ class WelcomeWindow(Gui):
 
         self.close()
         del self
+
 
 # region Edit DB / Collection Buttons
 
@@ -531,6 +543,7 @@ class DatabaseWindow(PopupWindow):
         self.empty_db_list()
 
         self.populate_database_list()
+
 
     def get_selected_database(self):
         selected_db = ""
@@ -621,6 +634,9 @@ class DatabaseWindow(PopupWindow):
 
 
     def delete_selected_database(self):
+
+        # BUG #7: Database will not be deleted unless highlighted in list before
+
         try:
             selected_db = self.get_selected_database()
             self.db.drop_selected_database(db_name=selected_db)
@@ -631,8 +647,8 @@ class DatabaseWindow(PopupWindow):
             self.msg = PopupTextmessage(self, f"Dropped {selected_db}")
 
         except DatabaseNotSelectedException:
-            return
-
+            self.msg = PopupTextmessage(self, "Must Select database first")
+            
 
     def showEvent(self, a0):
         self.update_database_list()
@@ -856,61 +872,44 @@ class CollectionWindow(PopupWindow):
 
 # endregion Edit DB / Collection Buttons
 
+
 # region CRUD Buttons
 
-class CreateWindow(DynamicPopupWindow):
+class CreateWindow(CRUDWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._event_listener = CreateWindowListener(self, self.db)
 
-    def set_fields(self):
-        super().set_fields()
-    
-        try:
-            self.disable_field('_id')
-        
-        except KeyError as e:
-            # Likely empty collection
-            pass
+        self.disable_id_field()
 
-        except RuntimeError as r:
-            # This happens because '_id' key is present but referenced object is deleted
-            pass
+    def create_button_onclick(self):
+        print("Clicked Create Button")
 
 
-class FilterWindow(DynamicPopupWindow):
+class FilterWindow(CRUDWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._event_listener = FilterWindowListener(self, self.db)
 
-    def set_fields(self):
-        super().set_fields()
 
-
-class ModifyWindow(DynamicPopupWindow):
+class ModifyWindow(CRUDWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._event_listener = ModifyWindowListener(self, self.db)
 
-    def set_fields(self):
-        super().set_fields()
-
-        self.disable_field('_id')
+        self.disable_id_field()
 
 
-class DeleteWindow(DynamicPopupWindow):
+class DeleteWindow(CRUDWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self._event_listener = DeleteWindowListener(self, self.db)
 
-    def set_fields(self):
-        super().set_fields()
-
-        self.disable_field('_id')
+        self.disable_id_field()
 
 # endregion CRUD Buttons
 

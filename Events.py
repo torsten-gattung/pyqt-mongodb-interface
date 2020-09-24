@@ -65,19 +65,9 @@ class MainWindowListener(EventListener):
         edit_collection_button.clicked.connect(self.gui.show_edit_collection_window)
 
 
-class DynamicPopupWindowListener(EventListener):
+class CRUDWindowListener(EventListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # self._add_field_listeners()
-
-    def _add_field_listeners(self):
-        for widget in self.gui.fields_container.children():
-
-            expected_type = type(QLineEdit())
-
-            if type(widget) == expected_type:
-                widget.setText("placeholder")
 
     def _list_all_field_data(self):
         for widget in self.gui.fields_container.children():
@@ -287,26 +277,27 @@ class CollectionWindowListener(EventListener):
     def _add_labels(self):
         pass
 
-
 # endregion Edit DB / Collection Window Listeners
 
 
 # region CRUD Window Listeners
 
-class CreateWindowListener(DynamicPopupWindowListener):
+class CreateWindowListener(CRUDWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self._add_button_listener()
+        self.create_button = self._get_create_button()
 
-    def _add_button_listener(self):
-        self.gui.widget_objects['createButton'].clicked.connect(
-            lambda: print("Created Item (fake)"))
-        self.gui.widget_objects['createButton'].clicked.connect(
-            self._list_all_field_data)
+        self.set_button_listeners()
+
+    def _get_create_button(self):
+        return self.gui.widget_objects['createButton']
+
+    def set_button_listeners(self):
+        self.create_button.clicked.connect(self.gui.create_button_onclick)
 
 
-class FilterWindowListener(DynamicPopupWindowListener):
+class FilterWindowListener(CRUDWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -319,7 +310,7 @@ class FilterWindowListener(DynamicPopupWindowListener):
             self._list_all_field_data)
 
 
-class ModifyWindowListener(DynamicPopupWindowListener):
+class ModifyWindowListener(CRUDWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -332,7 +323,7 @@ class ModifyWindowListener(DynamicPopupWindowListener):
             self._list_all_field_data)
 
 
-class DeleteWindowListener(DynamicPopupWindowListener):
+class DeleteWindowListener(CRUDWindowListener):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
