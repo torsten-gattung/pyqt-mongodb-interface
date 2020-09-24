@@ -138,6 +138,7 @@ class WelcomeWindowListener(EventListener):
                                              self._port_field.text()))
 
         try:
+            # BUG #5 Program will crash if connection cannot be established
             host = self._host_field.text()
             port = int(self._port_field.text())
             self.db.connect(host, port)

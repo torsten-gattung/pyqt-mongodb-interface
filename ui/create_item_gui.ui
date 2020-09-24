@@ -52,8 +52,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>399</width>
-        <height>529</height>
+        <width>397</width>
+        <height>527</height>
        </rect>
       </property>
      </widget>
@@ -62,7 +62,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>10</y>
       <width>421</width>
       <height>21</height>
@@ -88,6 +88,19 @@
     </property>
     <property name="text">
      <string>Create</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="newFieldButton">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>40</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>New Field</string>
     </property>
    </widget>
   </widget>

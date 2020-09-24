@@ -6,6 +6,7 @@ from pymongo import MongoClient
 
 from pymongo.database import Database as MongoDatabase
 from pymongo.collection import Collection as MongoCollection
+from pymongo.results import InsertOneResult
 
 from custom_exceptions import *
 
@@ -142,6 +143,19 @@ class MongoHandler:
         self.update_local_dbs()
 
 
+    def create_query(self, data):
+        if self.current_db is None:
+            raise DatabaseNotSelectedException("Must select database first")
+
+        if self.current_collection is None:
+            raise CollectionNotChosenYetException("Must select collection first")
+            
+        if data is None:
+            raise BadFieldValueException("Check fields passed into backend")
+
+        self.current_collection.create_query(data)
+
+
 class Database(MongoDatabase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -164,27 +178,52 @@ class Collection(MongoCollection):
 
         self.is_empty = self._is_empty()
 
+
     def _is_empty(self):
         return self.count_documents({}) == 0
 
-    def get_field_template(self):
+
+    def get_field_types(self):
         """
         Returns an element in the collection to its schema
         """
 
         if not self.is_empty:
             template_ = self.find_one()
-            return template_
+
+            types_template = {key: type(value).__name__ for key, value in template_.items()}
+
+            print("\nPrinting Field Types: ")
+            util.print_dict(types_template)
+            print("\n")
+
+            return types_template
         
         raise EmptyCollectionException("Collection has no documents")
+
+
+    def convert_data_to_correct_types(self, data):
+        field_types = self.get_field_types()
+
+        converted_data = {}
+
+        for field, value in data.items():
+
+            type_ = field_types[field]
+
+            converted_data[field] = util.convert_to(type_, value)
+
+        print("\nPrinting converted data: ")
+        util.print_dict(converted_data)
+        print("\n")
+
+        return converted_data
             
 
-if __name__ == "__main__":
-    handler = MongoHandler()
-    handler.connect("localhost", 27017)
+    def create_query(self, data):
 
-    test_db = handler.db_dict['test'].collection_dict['test_db']
+        data = self.convert_data_to_correct_types(data)
 
-    print(test_db.get_field_template())
-
-    print(test_db.count_documents({}))
+        result: InsertOneResult = self.insert_one(data)
+        
+        return result.inserted_id

@@ -420,10 +420,10 @@ class CRUDWindow(PopupWindow):
             raise CollectionNotChosenYetException()
 
     def _get_label_and_field_values(self):
-        template = self.db.current_collection.get_field_template()
+        template = self.db.current_collection.get_field_types()
     
         label_values = template.keys()
-        field_values= template.values()
+        field_values = template.values()
 
         return label_values, field_values
 
@@ -445,10 +445,12 @@ class CRUDWindow(PopupWindow):
         
         except KeyError as e:
             # Likely empty collection
+            print(e)
             pass
 
         except RuntimeError as r:
             # This happens because '_id' key is present but referenced object is deleted
+            print(e)
             pass
 
 
@@ -620,6 +622,7 @@ class DatabaseWindow(PopupWindow):
     def create_new_database(self):
 
         # TODO: add validation for database names
+        # BUG #6: Program will crash if a new database is created with a name already in use
 
         db_name_input = self.widget_objects['databaseNameInput']
         # selected_template = self.widget_objects['templateList'].selectedItems()[0]
@@ -636,6 +639,7 @@ class DatabaseWindow(PopupWindow):
     def delete_selected_database(self):
 
         # BUG #7: Database will not be deleted unless highlighted in list before
+        # BUG #7: This happens because the db list is being emptied and filled everytime the window is opened
 
         try:
             selected_db = self.get_selected_database()
@@ -883,8 +887,31 @@ class CreateWindow(CRUDWindow):
 
         self.disable_id_field()
 
+
+    def set_fields(self):
+        super().set_fields()
+        self.disable_id_field()
+
+
+    def convert_to_correct_datatypes(self, data):
+        pass
+
+    def get_formatted_query_data(self):
+
+        data = self.fields
+        formatted_data = {key: value.text() for key, value in data.items()}
+
+        formatted_data.pop('_id')
+
+        return formatted_data
+
     def create_button_onclick(self):
-        print("Clicked Create Button")
+
+        formatted_data = self.get_formatted_query_data()
+
+        self.db.create_query(formatted_data)
+
+        # TODO: show created element id
 
 
 class FilterWindow(CRUDWindow):
@@ -900,6 +927,8 @@ class ModifyWindow(CRUDWindow):
 
         self._event_listener = ModifyWindowListener(self, self.db)
 
+    def set_fields(self):
+        super().set_fields()
         self.disable_id_field()
 
 
@@ -909,6 +938,8 @@ class DeleteWindow(CRUDWindow):
 
         self._event_listener = DeleteWindowListener(self, self.db)
 
+    def set_fields(self):
+        super().set_fields()
         self.disable_id_field()
 
 # endregion CRUD Buttons

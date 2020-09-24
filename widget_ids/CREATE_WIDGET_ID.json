@@ -4,6 +4,7 @@
     ],
 
     "QPushButton": [
-        "createButton"
+        "createButton",
+        "newFieldButton"
     ]
 }

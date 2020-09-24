@@ -4,3 +4,4 @@ venv
 .vscode
 
 # Files
+sample_data.json
