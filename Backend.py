@@ -162,13 +162,22 @@ class Collection(MongoCollection):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.is_empty = self._is_empty()
+
+    def _is_empty(self):
+        return self.count_documents({}) == 0
+
     def get_field_template(self):
         """
         Returns an element in the collection to its schema
         """
-        template_ = self.find_one()
-        return template_
 
+        if not self.is_empty:
+            template_ = self.find_one()
+            return template_
+        
+        raise EmptyCollectionException("Collection has no documents")
+            
 
 if __name__ == "__main__":
     handler = MongoHandler()

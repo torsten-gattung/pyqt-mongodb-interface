@@ -27,3 +27,8 @@ class CollectionNotChosenYetException(Exception):
 class DatabaseNotSelectedException(Exception):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class EmptyCollectionException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

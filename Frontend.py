@@ -258,17 +258,10 @@ class DynamicPopupWindow(PopupWindow):
 
         self.event_listener_manager = DynamicPopupWindowListener(self, self.db)
 
+
     def get_fields_container(self):
         return self.widget_objects['fieldsWidget']
 
-    def _make_widgets(self):
-        label_widgets = [QLabel(col_name) for col_name in self.label_values]
-        field_widgets = [QLineEdit() for _ in self.label_values]
-
-        labels = {str(widget_text): widget for widget_text, widget in zip(self.label_values, label_widgets)}
-        fields = {str(widget_text): widget for widget_text, widget in zip(self.label_values, field_widgets)}
-
-        return labels, fields
 
     def _set_widgets_size(self):
         [label.setFixedSize(125, 25) for label in self.labels.values()]
@@ -278,14 +271,14 @@ class DynamicPopupWindow(PopupWindow):
         [label.setText(str(text)) for label, text in zip(self.labels.values(), self.label_values)]
         [field.setText(str(text)) for field, text in zip(self.fields.values(), self.field_values)]
 
-    def label_widgets(self):
+    def _label_widgets(self):
         """
         generator that yields a row number and label widget for all labels
         """
         for index, label in enumerate(self.labels.values()):
             yield index, label
 
-    def field_widgets(self):
+    def _field_widgets(self):
         """
         generator that yields a row number and field widget for all fields
         """
@@ -293,8 +286,8 @@ class DynamicPopupWindow(PopupWindow):
             yield index, field
 
     def _add_widgets_to_layout(self):
-        [self.fields_container_layout.addWidget(label, index, 0) for index, label in self.label_widgets()]
-        [self.fields_container_layout.addWidget(field, index, 1) for index, field in self.field_widgets()]
+        [self.fields_container_layout.addWidget(label, index, 0) for index, label in self._label_widgets()]
+        [self.fields_container_layout.addWidget(field, index, 1) for index, field in self._field_widgets()]
 
     def clear_layout(self):
         while not self.fields_container_layout.isEmpty():
@@ -303,10 +296,16 @@ class DynamicPopupWindow(PopupWindow):
             self.fields_container_layout.itemAt(0).widget().deleteLater()
             self.fields_container_layout.itemAt(0).widget().setParent(None)
 
-    def _set_fields(self):
+    def _make_widgets(self):
+        label_widgets = [QLabel(col_name) for col_name in self.label_values]
+        field_widgets = [QLineEdit() for _ in self.label_values]
 
-        # FIXME: layout must be only be set the first time this method is called
-        # Add a flag to determine whether this is the first time
+        paired_label_values = {str(widget_text): widget for widget_text, widget in zip(self.label_values, label_widgets)}
+        paired_field_values = {str(widget_text): widget for widget_text, widget in zip(self.label_values, field_widgets)}
+
+        return paired_label_values, paired_field_values
+
+    def _setup_layout(self):
         if self.first_time:
             self.first_time = False
             self.fields_container_layout = QGridLayout(self.fields_container)
@@ -314,47 +313,56 @@ class DynamicPopupWindow(PopupWindow):
         else:
             self.clear_layout()
 
-        self.labels, self.fields = self._make_widgets()
+    def show_empty_label(self):
+        empty_label = QLabel("This collection is empty")
+        self.fields_container_layout.addWidget(empty_label, 0, 0)
 
-        self._set_widgets_size()
-        self._add_widgets_to_layout()
-        self._set_widgets_text()
+    def _set_fields(self, empty_collection=False):
+    
+        self._setup_layout()
+
+        if empty_collection:
+            self.show_empty_label()
+        
+        else:
+
+            self.labels, self.fields = self._make_widgets()
+
+            self._set_widgets_size()
+            self._add_widgets_to_layout()
 
         self.fields_container.setLayout(self.fields_container_layout)
 
-    def remove_all(self):
-        """
-        removes all fields and labels from layout
-        """
-
-    def check_current_collection(self):
+    def _check_current_collection(self):
         if self.db.current_collection is None:
             raise CollectionNotChosenYetException()
 
     def _get_label_and_field_values(self):
-        
         template = self.db.current_collection.get_field_template()
-
-        # BUG 4: this will crash program if given collection is empty
+    
         label_values = template.keys()
         field_values= template.values()
 
-        print("Got field and label values!")
-
-        for label, field in zip(label_values, field_values):
-            print(f"{label}: {field}")
-
         return label_values, field_values
-    
+
+
     def set_fields(self):
-        self.check_current_collection()
+        self._check_current_collection()
 
-        self.label_values, self.field_values = self._get_label_and_field_values()
+        try:
+            self.label_values, self.field_values = self._get_label_and_field_values()
+            self._set_fields()
+        
+        except EmptyCollectionException as e:
+            self._set_fields(empty_collection=True)
 
-        self._set_fields()
 
     def disable_field(self, field_name):
+        """
+        Makes a field unable to have its value modified
+        """
         self.fields[field_name].setDisabled(True)
+
 
     def show(self):
         try:
@@ -858,8 +866,17 @@ class CreateWindow(DynamicPopupWindow):
 
     def set_fields(self):
         super().set_fields()
+    
+        try:
+            self.disable_field('_id')
         
-        self.disable_field('_id')
+        except KeyError as e:
+            # Likely empty collection
+            pass
+
+        except RuntimeError as r:
+            # This happens because '_id' key is present but referenced object is deleted
+            pass
 
 
 class FilterWindow(DynamicPopupWindow):
