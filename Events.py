@@ -288,11 +288,35 @@ class CreateWindowListener(CRUDWindowListener):
         super().__init__(*args, **kwargs)
 
         self.create_button = self._get_create_button()
+        self.new_field_button = self._get_new_field_button()
 
         self.set_button_listeners()
 
+
     def _get_create_button(self):
         return self.gui.widget_objects['createButton']
+
+    def _get_new_field_button(self):
+        return self.gui.widget_objects['newFieldButton']
+
+
+    def set_button_listeners(self):
+        self.create_button.clicked.connect(self.gui.create_button_onclick)
+        self.new_field_button.clicked.connect(self.gui.new_field_button_onclick)
+
+
+class NewFieldWindowListener(EventListener):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.create_button = self._get_create_button()
+
+        self.set_button_listeners()
+
+    
+    def _get_create_button(self):
+        return self.gui.widget_objects['createButton']
+
 
     def set_button_listeners(self):
         self.create_button.clicked.connect(self.gui.create_button_onclick)

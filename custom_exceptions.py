@@ -14,6 +14,11 @@ class BadFieldValueException(Exception):
         super().__init__(*args, **kwargs)
 
 
+class BadFieldTypeException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class ClientAndServerOutOfSyncException(RuntimeError):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,5 +35,10 @@ class DatabaseNotSelectedException(Exception):
 
 
 class EmptyCollectionException(Exception):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class FieldNameAlreadyInUseException(Exception):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

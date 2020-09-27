@@ -14,7 +14,7 @@ class Gui(QMainWindow):
 
     def __init__(self, db, widget_ids: dict, gui_file_path: str):
         super().__init__()
-        
+
         # Stores all loaded widgets for easy access
         self.widget_objects = {}
 
@@ -252,7 +252,7 @@ class PopupTextmessage(PopupWindow):
                          widget_ids=ids,
                          gui_file_path=path_,
                          db=None
-                        )
+                         )
 
         self.setMessage(text)
 
@@ -279,7 +279,7 @@ class PopupTextmessage(PopupWindow):
 
 class PopupConfirmBox(PopupWindow):
     def __init__(self, parent, text="Warning", callback=None):
-    
+
         ids = util.json_to_dict(global_vars['WIDGET_ID']['POPUP_CONFIRM'])
         path_ = global_vars['GUI']['POPUP_CONFIRM']
 
@@ -287,7 +287,7 @@ class PopupConfirmBox(PopupWindow):
                          widget_ids=ids,
                          gui_file_path=path_,
                          db=None
-                        )
+                         )
 
         self.callback = callback
 
@@ -300,18 +300,15 @@ class PopupConfirmBox(PopupWindow):
 
         self.show()
 
-
     def _get_confirm_button(self):
         return self.widget_objects['confirmButton']
 
     def _get_cancel_button(self):
         return self.widget_objects['cancelButton']
 
-
     def set_button_listeners(self):
-        self.confirm_button.clicked.connect(self.confirm_button_onclick)        
+        self.confirm_button.clicked.connect(self.confirm_button_onclick)
         self.cancel_button.clicked.connect(self.cancel_button_onclick)
-
 
     def confirm_button_onclick(self):
         self.close()
@@ -321,7 +318,6 @@ class PopupConfirmBox(PopupWindow):
         self.close()
         return
 
-
     def setMessage(self, text):
         self.widget_objects['message'].setText(text)
 
@@ -329,7 +325,7 @@ class PopupConfirmBox(PopupWindow):
 class CRUDWindow(PopupWindow):
     def __init__(self, disable_field_edit=False, fields=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self.first_time = True
 
         self.label_values = []
@@ -340,18 +336,18 @@ class CRUDWindow(PopupWindow):
 
         self.fields_container = self.get_fields_container()
 
-
     def get_fields_container(self):
         return self.widget_objects['fieldsWidget']
-
 
     def _set_widgets_size(self):
         [label.setFixedSize(125, 25) for label in self.labels.values()]
         [field.setFixedSize(225, 25) for field in self.fields.values()]
 
     def _set_widgets_text(self):
-        [label.setText(str(text)) for label, text in zip(self.labels.values(), self.label_values)]
-        [field.setText(str(text)) for field, text in zip(self.fields.values(), self.field_values)]
+        [label.setText(str(text)) for label, text in zip(
+            self.labels.values(), self.label_values)]
+        [field.setText(str(text)) for field, text in zip(
+            self.fields.values(), self.field_values)]
 
     def _label_widgets(self):
         """
@@ -368,8 +364,10 @@ class CRUDWindow(PopupWindow):
             yield index, field
 
     def _add_widgets_to_layout(self):
-        [self.fields_container_layout.addWidget(label, index, 0) for index, label in self._label_widgets()]
-        [self.fields_container_layout.addWidget(field, index, 1) for index, field in self._field_widgets()]
+        [self.fields_container_layout.addWidget(
+            label, index, 0) for index, label in self._label_widgets()]
+        [self.fields_container_layout.addWidget(
+            field, index, 1) for index, field in self._field_widgets()]
 
     def clear_layout(self):
         while not self.fields_container_layout.isEmpty():
@@ -382,8 +380,10 @@ class CRUDWindow(PopupWindow):
         label_widgets = [QLabel(col_name) for col_name in self.label_values]
         field_widgets = [QLineEdit() for _ in self.label_values]
 
-        paired_label_values = {str(widget_text): widget for widget_text, widget in zip(self.label_values, label_widgets)}
-        paired_field_values = {str(widget_text): widget for widget_text, widget in zip(self.label_values, field_widgets)}
+        paired_label_values = {str(widget_text): widget for widget_text, widget in zip(
+            self.label_values, label_widgets)}
+        paired_field_values = {str(widget_text): widget for widget_text, widget in zip(
+            self.label_values, field_widgets)}
 
         return paired_label_values, paired_field_values
 
@@ -400,12 +400,12 @@ class CRUDWindow(PopupWindow):
         self.fields_container_layout.addWidget(empty_label, 0, 0)
 
     def _set_fields(self, empty_collection=False):
-    
+
         self._setup_layout()
 
         if empty_collection:
             self.show_empty_label()
-        
+
         else:
 
             self.labels, self.fields = self._make_widgets()
@@ -421,12 +421,11 @@ class CRUDWindow(PopupWindow):
 
     def _get_label_and_field_values(self):
         template = self.db.current_collection.get_field_types()
-    
-        label_values = template.keys()
-        field_values = template.values()
+
+        label_values = list(template.keys())
+        field_values = list(template.values())
 
         return label_values, field_values
-
 
     def set_fields(self):
         self._check_current_collection()
@@ -434,15 +433,14 @@ class CRUDWindow(PopupWindow):
         try:
             self.label_values, self.field_values = self._get_label_and_field_values()
             self._set_fields()
-        
+
         except EmptyCollectionException as e:
             self._set_fields(empty_collection=True)
-
 
     def disable_id_field(self):
         try:
             self.disable_field('_id')
-        
+
         except KeyError as e:
             # Likely empty collection
             print(e)
@@ -453,22 +451,20 @@ class CRUDWindow(PopupWindow):
             print(e)
             pass
 
-
     def disable_field(self, field_name):
         """
         Makes a field unable to have its value modified
         """
         self.fields[field_name].setDisabled(True)
 
-
     def show(self):
         try:
             self.set_fields()
             return super().show()
-            
+
         except CollectionNotChosenYetException as e:
-            # TODO: Show popup window to tell user to choose database and collection first
-            self.msg = PopupTextmessage(self, text="Must choose Database and Collection First")
+            self.msg = PopupTextmessage(
+                self, text="Must choose Database and Collection First")
             print("Cannot open CRUD window without choosing a collection first")
             return
 
@@ -516,23 +512,20 @@ class DatabaseWindow(PopupWindow):
         self._assign_information_labels()
         self.update_information_labels(with_default=True)
 
-
     def _assign_information_labels(self):
         self.current_db_label = self.widget_objects['currentDatabaseLabel']
         self.local_col_count_label = self.widget_objects['collectionCountLabel']
         self.local_doc_count_label = self.widget_objects['localDocumentCountLabel']
         self.database_count_label = self.widget_objects['databaseCountLabel']
 
-
     def update_collection_list(self):
         self.parent_gui.update_collection_list()
-
 
     def _get_database_list(self):
         return self.widget_objects['databaseList']
 
     def empty_db_list(self):
-        
+
         for _ in range(self.db_list.count()):
             self.db_list.takeItem(0)
 
@@ -546,7 +539,6 @@ class DatabaseWindow(PopupWindow):
 
         self.populate_database_list()
 
-
     def get_selected_database(self):
         selected_db = ""
 
@@ -559,7 +551,6 @@ class DatabaseWindow(PopupWindow):
             msg = "Must select a database first"
 
             raise DatabaseNotSelectedException(msg)
-
 
     def _update_current_database_label(self, with_default):
         if with_default:
@@ -576,7 +567,7 @@ class DatabaseWindow(PopupWindow):
             count_ = len(self.db.current_db.list_collection_names())
             count_ = str(count_)
             self.local_col_count_label.setText(count_)
-    
+
     def _update_local_doc_count(self, with_default):
         if with_default:
             self.local_doc_count_label.setText("N/A")
@@ -603,7 +594,6 @@ class DatabaseWindow(PopupWindow):
 
         if not with_default:
             self.parent_gui.update_information_labels()
-
 
     def switch_to_selected_database(self):
         try:
@@ -635,7 +625,6 @@ class DatabaseWindow(PopupWindow):
         self.update_database_list()
         self.msg = PopupTextmessage(self, f"Created Database: {database_name}")
 
-
     def delete_selected_database(self):
 
         # BUG #7: Database will not be deleted unless highlighted in list before
@@ -652,7 +641,6 @@ class DatabaseWindow(PopupWindow):
 
         except DatabaseNotSelectedException:
             self.msg = PopupTextmessage(self, "Must Select database first")
-            
 
     def showEvent(self, a0):
         self.update_database_list()
@@ -676,17 +664,14 @@ class CollectionWindow(PopupWindow):
         self.assign_information_labels()
         self.update_information_labels(with_default=True)
 
-
     def assign_information_labels(self):
         self.current_col_label = self.widget_objects['currentCollectionLabel']
         self.current_db_label = self.widget_objects['currentDatabaseLabel']
         self.db_count_label = self.widget_objects['databaseCountLabel']
         self.doc_count_label = self.widget_objects['documentCountLabel']
 
-
     def _get_collection_list_widget(self):
         return self.widget_objects['collectionList']
-
 
     def clear_collection_list(self):
         while len(self.collection_list) > 0:
@@ -706,12 +691,14 @@ class CollectionWindow(PopupWindow):
 
     def get_selected_collection(self):
         try:
-            selected_collection = self.collection_list.selectedItems()[0].text()
+            selected_collection = self.collection_list.selectedItems()[
+                0].text()
             return selected_collection
 
         except IndexError as e:
             print("Must select a collection first!")
-            raise CollectionNotChosenYetException("Must select a collection first")
+            raise CollectionNotChosenYetException(
+                "Must select a collection first")
             return
 
     def switch_to_selected_collection(self):
@@ -726,7 +713,6 @@ class CollectionWindow(PopupWindow):
 
         except CollectionNotChosenYetException:
             self.msg = PopupTextmessage(self, "Must select a collection first")
-
 
     def _update_current_col_label(self, with_default):
         if with_default:
@@ -771,7 +757,6 @@ class CollectionWindow(PopupWindow):
         if not with_default:
             self.parent_gui.update_information_labels()
 
-
     def get_changed_collection_name_field(self):
         return self.widget_objects['collectionNameLineEdit']
 
@@ -789,17 +774,18 @@ class CollectionWindow(PopupWindow):
             selected_collection = self.get_selected_collection()
             new_collection_name = self.get_changed_collection_name()
 
-            self.db.change_collection_name(selected_collection, new_collection_name)
+            self.db.change_collection_name(
+                selected_collection, new_collection_name)
 
             self.update_collection_list()
             self.update_information_labels(with_default=True)
 
         except CollectionNotChosenYetException:
             self.msg = PopupTextmessage(self, "Must select a collection first")
-        
-        except BadFieldValueException:
-            self.msg = PopupTextmessage(self, "Must provide a new name for collection")
 
+        except BadFieldValueException:
+            self.msg = PopupTextmessage(
+                self, "Must provide a new name for collection")
 
     def get_new_collection_name_field(self):
         return self.widget_objects['newCollectionNameLineEdit']
@@ -825,14 +811,14 @@ class CollectionWindow(PopupWindow):
             self.msg = PopupTextmessage(self, text=msg)
 
         except BadFieldValueException:
-            self.msg = PopupTextmessage(self, "Must provide valid collection name first")
-
+            self.msg = PopupTextmessage(
+                self, "Must provide valid collection name first")
 
     def _is_last_collection(self):
         return len(self.collection_list) == 1
 
     def _drop_selected_collection(self, selected_collection, is_last=False):
-            
+
         self.db.drop_selected_collection(selected_collection, is_last=is_last)
 
         if is_last:
@@ -850,25 +836,26 @@ class CollectionWindow(PopupWindow):
             if self._is_last_collection():
 
                 message = f"Warning! This will also drop this collection's database ({self.db.current_db.name})"
-                callback = lambda: self._drop_selected_collection(selected_collection, is_last=True)
+                def callback(): return self._drop_selected_collection(
+                    selected_collection, is_last=True)
 
-                self.msg = PopupConfirmBox(self, text=message, callback=callback)
-            
+                self.msg = PopupConfirmBox(
+                    self, text=message, callback=callback)
+
             else:
                 self._drop_selected_collection(selected_collection)
 
         except CollectionNotChosenYetException:
             self.msg = PopupTextmessage(self, "Must select a collection first")
 
-
     def export_collection(self):
         print("Button Clicked!")
-
 
     def show(self):
         if self.db.current_db is None:
             print("Must choose database before you can open the Collection Window")
-            self.msg = PopupTextmessage(self, text="Must choose database before you can open the Collection Window")
+            self.msg = PopupTextmessage(
+                self, text="Must choose database before you can open the Collection Window")
             return
         else:
             return super().show()
@@ -885,18 +872,23 @@ class CreateWindow(CRUDWindow):
 
         self._event_listener = CreateWindowListener(self, self.db)
 
-        self.disable_id_field()
+        self.new_fields_added = False
+        self.new_field_types = {}
+        self.new_field_button = self.get_new_field_button()
 
+        self.disable_id_field()
 
     def set_fields(self):
         super().set_fields()
         self.disable_id_field()
 
-
-    def convert_to_correct_datatypes(self, data):
-        pass
+    def get_new_field_button(self):
+        return self.widget_objects['newFieldButton']
 
     def get_formatted_query_data(self):
+        """
+        Returns dict of field labels and field values (minus _id field)
+        """
 
         data = self.fields
         formatted_data = {key: value.text() for key, value in data.items()}
@@ -905,13 +897,168 @@ class CreateWindow(CRUDWindow):
 
         return formatted_data
 
-    def create_button_onclick(self):
+    def get_current_field_names(self):
+        return self.label_values
 
+    def new_field_button_onclick(self):
+        widgets = util.json_to_dict("widget_ids/NEW_FIELD_WIDGET_ID.json")
+        path_to_gui = "ui/new_field_gui.ui"
+        field_names = self.get_current_field_names()
+
+        self.new_field_window = CreateNewFieldWindow(field_names=field_names,
+                                                     parent_gui=self,
+                                                     gui_file_path=path_to_gui,
+                                                     widget_ids=widgets,
+                                                     db=self.db
+                                                     )
+
+        self.new_field_window.show()
+
+    def add_id_field(self):
+        new_field_label = QLabel('_id')
+        new_field_lineEdit = QLineEdit(self)
+
+        # Update value lists
+        self.label_values.append('_id')
+        self.field_values.append("")
+
+        # Update widget dictionary
+        self.fields['_id'] = new_field_lineEdit
+
+        self.fields_container_layout.addWidget(new_field_label, 0, 0)
+        self.fields_container_layout.addWidget(new_field_lineEdit, 0, 1)
+
+        new_field_lineEdit.setDisabled(True)
+
+    def check_empty_layout(self):
+        """
+        If True, then _id field must be added because it didn't exist
+        before the last field was added
+        """
+        return len(self.fields) == 1
+
+    def add_new_field(self, field_name):
+
+        # BUG Potential. This needs a lot of testing
+
+        new_field_label = QLabel(field_name)
+        new_field_lineEdit = QLineEdit(self)
+
+        # Update value lists
+        self.label_values.append(field_name)
+        self.field_values.append("")
+
+        # Update widget dictionary
+        self.fields[field_name] = new_field_lineEdit
+
+        if self.check_empty_layout():
+            self.clear_layout()
+            self.add_id_field()
+
+        row_index = len(self.label_values)
+        self.fields_container_layout.addWidget(new_field_label, row_index, 0)
+        self.fields_container_layout.addWidget(
+            new_field_lineEdit, row_index, 1)
+
+        self.new_fields_added = True
+
+    def set_new_field_type(self, field_name, field_type):
+
+        if field_type == "string":
+            self.new_field_types[field_name] = "str"
+
+        elif field_type == "int":
+            self.new_field_types[field_name] = "int"
+
+        elif field_type == "float":
+            self.new_field_types[field_name] = "float"
+
+        else:
+            raise BadFieldTypeException(
+                "type must be 'str', 'int', or 'float'")
+
+    def create_new_field(self, field_name, field_type):
+        print("\nNew Field Info")
+        print(f"Field Name: {field_name}")
+        print(f"Field Type: {field_type}\n")
+
+        self.set_new_field_type(field_name, field_type)
+        self.add_new_field(field_name)
+
+    def create_button_onclick(self):
         formatted_data = self.get_formatted_query_data()
 
-        self.db.create_query(formatted_data)
+        if self.new_fields_added:
 
-        # TODO: show created element id
+            custom_types = self.new_field_types()
+
+            created_id = self.db.create_query(
+                data=formatted_data,
+                callback=print_id,
+                custom_types_flag=True,
+                custom_types=custom_types)
+
+        else:
+
+            created_id = self.db.create_query(
+                data=formatted_data, callback=print_id)
+
+
+class CreateNewFieldWindow(PopupWindow):
+    def __init__(self, field_names, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.event_listener = NewFieldWindowListener(self, self.db)
+
+        self.name_lineEdit = self._get_name_lineEdit()
+        self.type_comboBox = self._get_type_comboBox()
+
+        self.field_names = field_names
+
+    def _get_name_lineEdit(self):
+        return self.widget_objects['fieldNameLineEdit']
+
+    def _get_type_comboBox(self):
+        return self.widget_objects['fieldTypeComboBox']
+
+    def validate_field_name(self, field_name: str):
+        if len(field_name) == 0:
+            raise BadFieldValueException("No value detected for field name")
+
+    def check_field_does_not_already_exist(self, field_name):
+        if field_name in self.field_names:
+            msg = "Cannot use name '" + field_name + "' Because it's already in use"
+            raise FieldNameAlreadyInUseException(msg)
+
+    def _get_field_name(self):
+
+        field_name = self.name_lineEdit.text()
+
+        self.validate_field_name(field_name=field_name)
+        self.check_field_does_not_already_exist(field_name=field_name)
+
+        return field_name
+
+    def _get_field_type(self):
+
+        field_type = self.type_comboBox.currentText()
+        print("Current chosen field type is " + field_type)
+
+        return field_type
+
+    def create_button_onclick(self):
+        try:
+            field_name = self._get_field_name()
+            field_type = self._get_field_type()
+
+            self.parent_gui.create_new_field(field_name, field_type)
+            self.close()
+
+        except FieldNameAlreadyInUseException as e:
+            self.msg = PopupTextmessage(self, "Field name is already in use")
+
+        except BadFieldValueException as e:
+            self.msg = PopupTextmessage(self, "Must enter field name")
 
 
 class FilterWindow(CRUDWindow):

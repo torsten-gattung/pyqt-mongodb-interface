@@ -11,6 +11,8 @@
         "EDIT_COL": "ui/edit_collection_gui.ui",
 
         "CREATE": "ui/create_item_gui.ui",
+        "NEW_FIELD": "ui/new_field_gui.ui",
+
         "MODIFY": "ui/modify_item_gui.ui",
         "FILTER": "ui/filter_item_gui.ui",
         "DELETE": "ui/delete_item_gui.ui",
@@ -29,6 +31,8 @@
         "EDIT_COL": "widget_ids/EDIT_COLLECTION_WIDGET_ID.json",
 
         "CREATE": "widget_ids/CREATE_WIDGET_ID.json",
+        "NEW_FIELD": "widget_ids/NEW_FIELD_WIDGET_ID.json",
+
         "MODIFY": "widget_ids/MODIFY_WIDGET_ID.json",
         "FILTER": "widget_ids/FILTER_WIDGET_ID.json",
         "DELETE": "widget_ids/DELETE_WIDGET_ID.json",

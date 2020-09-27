@@ -1,0 +1,13 @@
+{
+    "QPushButton": [
+        "createButton"
+    ],
+
+    "QLineEdit": [
+        "fieldNameLineEdit"
+    ],
+
+    "QComboBox": [
+        "fieldTypeComboBox"
+    ]
+}

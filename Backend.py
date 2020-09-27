@@ -143,7 +143,7 @@ class MongoHandler:
         self.update_local_dbs()
 
 
-    def create_query(self, data):
+    def create_query(self, data, callback, custom_types_flag=False, custom_types=None):
         if self.current_db is None:
             raise DatabaseNotSelectedException("Must select database first")
 
@@ -153,7 +153,7 @@ class MongoHandler:
         if data is None:
             raise BadFieldValueException("Check fields passed into backend")
 
-        self.current_collection.create_query(data)
+        self.current_collection.create_query(data, callback, custom_types_flag, custom_types)
 
 
 class Database(MongoDatabase):
@@ -185,7 +185,7 @@ class Collection(MongoCollection):
 
     def get_field_types(self):
         """
-        Returns an element in the collection to its schema
+        Returns dict of field: field_type
         """
 
         if not self.is_empty:
@@ -198,7 +198,7 @@ class Collection(MongoCollection):
             print("\n")
 
             return types_template
-        
+    
         raise EmptyCollectionException("Collection has no documents")
 
 
@@ -218,12 +218,33 @@ class Collection(MongoCollection):
         print("\n")
 
         return converted_data
-            
+    
+    def convert_custom_types(self, data, field_types):
+        converted_data = {}
 
-    def create_query(self, data):
+        for field, value in data.items():
 
-        data = self.convert_data_to_correct_types(data)
+            type_ = field_types[field]
+
+            converted_data[field] = util.convert_to(type_, value)
+
+        print("\nPrinting converted data: ")
+        util.print_dict(converted_data)
+        print("\n")
+
+        return converted_data
+
+    def create_query(self, data, callback, custom_types_flag, custom_types):
+        
+        # No new field are present
+        if custom_types_flag:
+
+            # BUG: If flag is True, then program will not convert the non-new field to their proper data types
+            data = self.convert_custom_types(data, custom_types)
+    
+        else:
+            data = self.convert_data_to_correct_types(data)
 
         result: InsertOneResult = self.insert_one(data)
-        
-        return result.inserted_id
+            
+        callback(result.inserted_id)
