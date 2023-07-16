@@ -1,5 +1,7 @@
 # Quick M.E
 
+Original version: https://github.com/aziznal/pyqt-mongodb-interface
+
 ## Description
 
 ***Quick M.E.*** is a graphical interface for using mongoDB.
