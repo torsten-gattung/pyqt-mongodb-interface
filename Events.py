@@ -54,7 +54,7 @@ class MainWindowListener(EventListener):
         Helper for self.add_function_button_listeners
         """
         button.clicked.connect(
-            lambda: self.gui.show_function_window(button_name, button))
+            lambda: self.gui.show_function_window(button_name))
 
     def _add_edit_db_and_collection_buttons_listeners(self):
 

@@ -1,6 +1,4 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import *
-import sys
 import toolbox as util
 from Events import *
 
